@@ -33,6 +33,7 @@
                                 <th>#</th>
                                 <th>Employee Name</th>
                                 <th>Department</th>
+                                <th>Point of Hire</th>
                                 <th>Work Location</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
@@ -51,6 +52,7 @@
                                         @endif
                                     </td>
                                     <td>{{ $contract->department }}</td>
+                                    <td>{{ $contract->point_of_hire }}</td>
                                     <td>{{ $contract->work_location }}</td>
                                     <td>{{ $contract->start_date->format('d M Y') }}</td>
                                     <td>{{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</td>

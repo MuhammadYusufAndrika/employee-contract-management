@@ -49,6 +49,9 @@ class ContractController extends Controller
                 case 'expired':
                     $query->where('end_date', '<', $today);
                     break;
+                case 'permanent':
+                    $query->whereNull('end_date');
+                    break;
             }
         }
 

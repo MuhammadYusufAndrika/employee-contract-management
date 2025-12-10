@@ -58,6 +58,7 @@
                             <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                             <option value="expiring" {{ request('status') == 'expiring' ? 'selected' : '' }}>Expiring Soon</option>
                             <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
+                            <option value="permanent" {{ request('status') == 'permanent' ? 'selected' : '' }}>Permanent</option>
                         </select>
                     </div>
                     <div class="col-md-2 d-flex align-items-end gap-2">

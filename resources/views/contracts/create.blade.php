@@ -55,19 +55,6 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="birthdate" class="form-label">Birth Date <span class="text-danger">*</span></label>
-                                <input type="date" 
-                                       class="form-control @error('birthdate') is-invalid @enderror" 
-                                       id="birthdate" 
-                                       name="birthdate" 
-                                       value="{{ old('birthdate') }}" 
-                                       required>
-                                @error('birthdate')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
                                 <label for="birthplace" class="form-label">Birth Place <span class="text-danger">*</span></label>
                                 <input type="text" 
                                        class="form-control @error('birthplace') is-invalid @enderror" 
@@ -77,6 +64,19 @@
                                        placeholder="e.g., Jakarta"
                                        required>
                                 @error('birthplace')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="birthdate" class="form-label">Birth Date <span class="text-danger">*</span></label>
+                                <input type="date" 
+                                       class="form-control @error('birthdate') is-invalid @enderror" 
+                                       id="birthdate" 
+                                       name="birthdate" 
+                                       value="{{ old('birthdate') }}" 
+                                       required>
+                                @error('birthdate')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -99,29 +99,16 @@
                         <h5 class="mb-3"><i class="bi bi-briefcase"></i> Employment Information</h5>
 
                         <div class="mb-3">
-                            <label for="job_position" class="form-label">Job Position <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control @error('job_position') is-invalid @enderror" 
-                                   id="job_position" 
-                                   name="job_position" 
-                                   value="{{ old('job_position') }}" 
-                                   placeholder="e.g., Software Engineer"
-                                   required>
-                            @error('job_position')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="point_of_hire" class="form-label">Point of Hire <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control @error('point_of_hire') is-invalid @enderror" 
-                                   id="point_of_hire" 
-                                   name="point_of_hire" 
-                                   value="{{ old('point_of_hire') }}" 
-                                   placeholder="e.g., Head Office, Branch A"
-                                   required>
-                            @error('point_of_hire')
+                            <label for="contract_type" class="form-label">Contract Type <span class="text-danger">*</span></label>
+                            <select class="form-select @error('contract_type') is-invalid @enderror" 
+                                    id="contract_type" 
+                                    name="contract_type" 
+                                    required>
+                                <option value="">Select Contract Type</option>
+                                <option value="Kontrak" {{ old('contract_type') == 'Kontrak' ? 'selected' : '' }}>Kontrak (Fixed Term)</option>
+                                <option value="KPP" {{ old('contract_type') == 'KPP' ? 'selected' : '' }}>KPP (Permanent)</option>
+                            </select>
+                            @error('contract_type')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -141,16 +128,57 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="contract_type" class="form-label">Contract Type <span class="text-danger">*</span></label>
-                            <select class="form-select @error('contract_type') is-invalid @enderror" 
-                                    id="contract_type" 
-                                    name="contract_type" 
-                                    required>
-                                <option value="">Select Contract Type</option>
-                                <option value="Kontrak" {{ old('contract_type') == 'Kontrak' ? 'selected' : '' }}>Kontrak (Fixed Term)</option>
-                                <option value="KPP" {{ old('contract_type') == 'KPP' ? 'selected' : '' }}>KPP (Permanent)</option>
-                            </select>
-                            @error('contract_type')
+                            <label for="job_position" class="form-label">Job Position <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('job_position') is-invalid @enderror" 
+                                   id="job_position" 
+                                   name="job_position" 
+                                   value="{{ old('job_position') }}" 
+                                   placeholder="e.g., Software Engineer"
+                                   required>
+                            @error('job_position')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('department') is-invalid @enderror" 
+                                   id="department" 
+                                   name="department" 
+                                   value="{{ old('department') }}" 
+                                   placeholder="e.g., IT, HR, Finance"
+                                   required>
+                            @error('department')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="work_location" class="form-label">Work Location <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('work_location') is-invalid @enderror" 
+                                   id="work_location" 
+                                   name="work_location" 
+                                   value="{{ old('work_location') }}" 
+                                   placeholder="e.g., Head Office, Branch A"
+                                   required>
+                            @error('work_location')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="point_of_hire" class="form-label">Point of Hire <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('point_of_hire') is-invalid @enderror" 
+                                   id="point_of_hire" 
+                                   name="point_of_hire" 
+                                   value="{{ old('point_of_hire') }}" 
+                                   placeholder="e.g., Head Office, Branch A"
+                                   required>
+                            @error('point_of_hire')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -180,34 +208,6 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control @error('department') is-invalid @enderror" 
-                                   id="department" 
-                                   name="department" 
-                                   value="{{ old('department') }}" 
-                                   placeholder="e.g., IT, HR, Finance"
-                                   required>
-                            @error('department')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="work_location" class="form-label">Work Location <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control @error('work_location') is-invalid @enderror" 
-                                   id="work_location" 
-                                   name="work_location" 
-                                   value="{{ old('work_location') }}" 
-                                   placeholder="e.g., Head Office, Branch A"
-                                   required>
-                            @error('work_location')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         <div class="mb-3">
