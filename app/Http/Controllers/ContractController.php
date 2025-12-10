@@ -167,8 +167,13 @@ class ContractController extends Controller
     {
         $request->validate([
             'nomor_kontrak' => 'required|string|max:255|unique:contracts,nomor_kontrak,' . $contract->id,
+            'job_position' => 'required|string|max:255',
+            'point_of_hire' => 'required|string|max:255',
+            'contract_type' => 'required|in:Kontrak,KPP',
+            'department' => 'required|string|max:255',
+            'work_location' => 'required|string|max:255',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
+            'end_date' => 'required_if:contract_type,Kontrak|nullable|date|after:start_date',
             'file_contract' => 'nullable|file|mimes:pdf|max:5120',
             'notes' => 'nullable|string',
         ]);
@@ -179,6 +184,11 @@ class ContractController extends Controller
         // Prepare update data
         $data = [
             'nomor_kontrak' => $request->nomor_kontrak,
+            'job_position' => $request->job_position,
+            'point_of_hire' => $request->point_of_hire,
+            'contract_type' => $request->contract_type,
+            'department' => $request->department,
+            'work_location' => $request->work_location,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ];

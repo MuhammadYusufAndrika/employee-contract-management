@@ -53,6 +53,10 @@
                             <td>{{ $contract->job_position }}</td>
                         </tr>
                         <tr>
+                            <th>Point of Hire:</th>
+                            <td>{{ $contract->point_of_hire }}</td>
+                        </tr>
+                        <tr>
                             <th>Department:</th>
                             <td>{{ $contract->department }}</td>
                         </tr>

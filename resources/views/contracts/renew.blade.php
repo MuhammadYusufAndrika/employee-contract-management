@@ -74,6 +74,79 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="job_position" class="form-label">Job Position <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('job_position') is-invalid @enderror" 
+                                   id="job_position" 
+                                   name="job_position" 
+                                   value="{{ old('job_position', $contract->job_position) }}" 
+                                   placeholder="e.g., Software Engineer"
+                                   required>
+                            @error('job_position')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="point_of_hire" class="form-label">Point of Hire <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('point_of_hire') is-invalid @enderror" 
+                                   id="point_of_hire" 
+                                   name="point_of_hire" 
+                                   value="{{ old('point_of_hire', $contract->point_of_hire) }}" 
+                                   placeholder="e.g., Head Office, Branch A"
+                                   required>
+                            @error('point_of_hire')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="contract_type" class="form-label">Contract Type <span class="text-danger">*</span></label>
+                            <select class="form-select @error('contract_type') is-invalid @enderror" 
+                                    id="contract_type" 
+                                    name="contract_type" 
+                                    required>
+                                <option value="">Select Contract Type</option>
+                                <option value="Kontrak" {{ old('contract_type', $contract->contract_type) == 'Kontrak' ? 'selected' : '' }}>Kontrak (Fixed Term)</option>
+                                <option value="KPP" {{ old('contract_type', $contract->contract_type) == 'KPP' ? 'selected' : '' }}>KPP (Permanent)</option>
+                            </select>
+                            @error('contract_type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
+                                <input type="text" 
+                                       class="form-control @error('department') is-invalid @enderror" 
+                                       id="department" 
+                                       name="department" 
+                                       value="{{ old('department', $contract->department) }}" 
+                                       placeholder="e.g., IT, Finance"
+                                       required>
+                                @error('department')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="work_location" class="form-label">Work Location <span class="text-danger">*</span></label>
+                                <input type="text" 
+                                       class="form-control @error('work_location') is-invalid @enderror" 
+                                       id="work_location" 
+                                       name="work_location" 
+                                       value="{{ old('work_location', $contract->work_location) }}" 
+                                       placeholder="e.g., Head Office"
+                                       required>
+                                @error('work_location')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="start_date" class="form-label">New Start Date <span class="text-danger">*</span></label>
@@ -81,26 +154,29 @@
                                        class="form-control @error('start_date') is-invalid @enderror" 
                                        id="start_date" 
                                        name="start_date" 
-                                       value="{{ old('start_date', $contract->end_date->addDay()->format('Y-m-d')) }}" 
+                                       value="{{ old('start_date', $contract->end_date ? $contract->end_date->addDay()->format('Y-m-d') : '') }}" 
                                        required>
                                 @error('start_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Suggested: {{ $contract->end_date->addDay()->format('d M Y') }}</small>
+                                @if($contract->end_date)
+                                    <small class="text-muted">Suggested: {{ $contract->end_date->addDay()->format('d M Y') }}</small>
+                                @endif
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label for="end_date" class="form-label">New End Date <span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-3" id="end_date_field">
+                                <label for="end_date" class="form-label">New End Date <span class="text-danger" id="end_date_required">*</span></label>
                                 <input type="date" 
                                        class="form-control @error('end_date') is-invalid @enderror" 
                                        id="end_date" 
                                        name="end_date" 
-                                       value="{{ old('end_date', $contract->end_date->addYear()->format('Y-m-d')) }}" 
-                                       required>
+                                       value="{{ old('end_date', $contract->end_date ? $contract->end_date->addYear()->format('Y-m-d') : '') }}">
                                 @error('end_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Suggested: {{ $contract->end_date->addYear()->format('d M Y') }}</small>
+                                @if($contract->end_date)
+                                    <small class="text-muted">Suggested: {{ $contract->end_date->addYear()->format('d M Y') }}</small>
+                                @endif
                             </div>
                         </div>
 
@@ -151,4 +227,28 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const contractType = document.getElementById('contract_type');
+        const endDateField = document.getElementById('end_date_field');
+        const endDateInput = document.getElementById('end_date');
+        const endDateRequired = document.getElementById('end_date_required');
+
+        function toggleEndDate() {
+            if (contractType.value === 'KPP') {
+                endDateField.style.display = 'none';
+                endDateInput.removeAttribute('required');
+                endDateRequired.style.display = 'none';
+            } else {
+                endDateField.style.display = 'block';
+                endDateInput.setAttribute('required', 'required');
+                endDateRequired.style.display = 'inline';
+            }
+        }
+
+        contractType.addEventListener('change', toggleEndDate);
+        toggleEndDate(); // Run on page load
+    });
+</script>
 @endsection
