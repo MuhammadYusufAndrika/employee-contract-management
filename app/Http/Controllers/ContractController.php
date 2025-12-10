@@ -32,7 +32,7 @@ class ContractController extends Controller
     public function store(StoreContractRequest $request)
     {
         $contract = Contract::create($request->validated());
-        
+
         // Create history record for new contract
         $contract->createHistory('created', 'Initial contract created');
 
@@ -62,7 +62,7 @@ class ContractController extends Controller
     public function update(UpdateContractRequest $request, Contract $contract)
     {
         $contract->update($request->validated());
-        
+
         // Create history record for update
         $contract->createHistory('updated', 'Contract information updated');
 

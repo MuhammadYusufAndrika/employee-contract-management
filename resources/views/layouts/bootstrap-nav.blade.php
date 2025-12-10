@@ -14,8 +14,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('contracts.*') ? 'active' : '' }}" href="{{ route('contracts.index') }}">
+                    <a class="nav-link {{ request()->routeIs('contracts.*') && !request()->routeIs('contracts.expiring') ? 'active' : '' }}" href="{{ route('contracts.index') }}">
                         <i class="bi bi-file-text"></i> Contracts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('contract-histories.*') ? 'active' : '' }}" href="{{ route('contract-histories.index') }}">
+                        <i class="bi bi-clock-history"></i> Contract History
                     </a>
                 </li>
                 <li class="nav-item position-relative">

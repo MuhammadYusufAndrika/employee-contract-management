@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/contracts-expiring', [ContractController::class, 'expiring'])->name('contracts.expiring');
     Route::get('/contracts/{contract}/renew', [ContractController::class, 'renew'])->name('contracts.renew');
     Route::put('/contracts/{contract}/process-renewal', [ContractController::class, 'processRenewal'])->name('contracts.process-renewal');
-    
+
     // Contract History routes
     Route::get('/contract-histories', [ContractHistoryController::class, 'index'])->name('contract-histories.index');
     Route::get('/contract-histories/by-nik', [ContractHistoryController::class, 'byNik'])->name('contract-histories.by-nik');

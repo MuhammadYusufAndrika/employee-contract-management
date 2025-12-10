@@ -60,9 +60,14 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="{{ route('contracts.edit', $contract) }}" class="btn btn-sm btn-primary" title="Renew/Edit">
-                                            <i class="bi bi-arrow-repeat"></i> Renew
-                                        </a>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('contracts.renew', $contract) }}" class="btn btn-sm btn-primary" title="Renew Contract">
+                                                <i class="bi bi-arrow-clockwise"></i> Renew
+                                            </a>
+                                            <a href="{{ route('contracts.edit', $contract) }}" class="btn btn-sm btn-warning" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

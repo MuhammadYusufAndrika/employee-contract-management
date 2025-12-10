@@ -70,6 +70,14 @@
                                             <a href="{{ route('contracts.edit', $contract) }}" class="btn btn-sm btn-warning" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
+                                            @if($contract->isExpiringSoon() || $contract->end_date < now())
+                                                <a href="{{ route('contracts.renew', $contract) }}" class="btn btn-sm btn-info" title="Renew Contract">
+                                                    <i class="bi bi-arrow-clockwise"></i>
+                                                </a>
+                                            @endif
+                                            <a href="{{ route('contract-histories.show', $contract) }}" class="btn btn-sm btn-secondary" title="View History">
+                                                <i class="bi bi-clock-history"></i>
+                                            </a>
                                             <form action="{{ route('contracts.destroy', $contract) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this contract?');">
                                                 @csrf
                                                 @method('DELETE')
