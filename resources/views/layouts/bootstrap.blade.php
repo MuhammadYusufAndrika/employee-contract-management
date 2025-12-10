@@ -25,12 +25,84 @@
             left: 0;
             z-index: 1000;
             transition: all 0.3s;
+            width: 250px;
+        }
+        
+        #sidebar.collapsed {
+            width: 70px;
+            overflow: hidden;
+        }
+        
+        #sidebar.collapsed .sidebar-header h3 {
+            font-size: 1.5rem;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #sidebar.collapsed .sidebar-header h3 i {
+            margin-right: 0;
+        }
+        
+        #sidebar.collapsed .sidebar-header h3 span {
+            display: none;
+        }
+        
+        #sidebar.collapsed ul.nav li a span {
+            display: none;
+        }
+        
+        #sidebar.collapsed ul.nav li a {
+            justify-content: center;
+            padding: 12px 10px;
+        }
+        
+        #sidebar.collapsed ul.nav li a i {
+            margin-right: 0;
+            font-size: 1.3rem;
+        }
+        
+        #sidebar.collapsed .nav-badge {
+            right: 10px;
+            font-size: 0.65rem;
+            padding: 2px 4px;
+        }
+        
+        #sidebar.collapsed .sidebar-footer .user-info div,
+        #sidebar.collapsed .sidebar-footer .btn span,
+        #sidebar.collapsed .sidebar-footer .btn-sm {
+            display: none;
+        }
+        
+        #sidebar.collapsed .sidebar-footer .user-info {
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        #sidebar.collapsed .sidebar-footer .user-info i {
+            margin-right: 0;
+        }
+        
+        #sidebar.collapsed .sidebar-footer .btn {
+            padding: 8px;
+            text-align: center;
+        }
+        
+        #sidebar.collapsed .logout-btn {
+            display: block !important;
+            padding: 8px;
+        }
+        
+        #sidebar.collapsed .logout-btn span {
+            display: none;
         }
         
         #sidebar .sidebar-header {
             padding: 20px;
             background: rgba(0,0,0,0.2);
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
         }
         
         #sidebar .sidebar-header h3 {
@@ -38,6 +110,14 @@
             margin: 0;
             font-size: 1.2rem;
             font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+        
+        #sidebar .sidebar-header h3 i {
+            margin-right: 10px;
+            flex-shrink: 0;
         }
         
         #sidebar ul.nav {
@@ -89,6 +169,11 @@
             padding: 20px;
             min-height: 100vh;
             background: #f8f9fa;
+            transition: all 0.3s;
+        }
+        
+        #content.expanded {
+            margin-left: 70px;
         }
         
         .top-navbar {
@@ -99,6 +184,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        
+        .sidebar-toggle-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-right: 15px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-toggle-btn:hover {
+            color: #0d6efd;
+            transform: scale(1.1);
         }
         
         .sidebar-footer {
@@ -168,7 +269,10 @@
     
     <div id="content">
         <div class="top-navbar">
-            <div>
+            <div class="d-flex align-items-center">
+                <button class="sidebar-toggle-btn" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
                 <h4 class="mb-0">@yield('title', 'Dashboard')</h4>
             </div>
             <div>
@@ -211,11 +315,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
             
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function() {
+            // Load saved state
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                content.classList.add('expanded');
+            }
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                content.classList.toggle('expanded');
+                
+                // Save state
+                const collapsed = sidebar.classList.contains('collapsed');
+                localStorage.setItem('sidebarCollapsed', collapsed);
+            });
+            
+            // Mobile sidebar toggle
+            const mobileSidebarToggle = document.querySelector('.sidebar-toggle');
+            if (mobileSidebarToggle) {
+                mobileSidebarToggle.addEventListener('click', function() {
                     sidebar.classList.toggle('active');
                 });
             }

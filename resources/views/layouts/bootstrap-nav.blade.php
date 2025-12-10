@@ -4,7 +4,10 @@
 
 <nav id="sidebar">
     <div class="sidebar-header">
-        <h3><i class="bi bi-file-earmark-text"></i> Contract Management</h3>
+        <h3>
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Contract Management</span>
+        </h3>
     </div>
     
     <ul class="nav flex-column">
@@ -50,12 +53,12 @@
                 </div>
             </div>
             <a href="{{ route('profile.edit') }}" class="btn btn-outline-light btn-sm mt-2 w-100">
-                <i class="bi bi-person"></i> Profile
+                <i class="bi bi-person"></i> <span>Profile</span>
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="btn btn-danger btn-sm logout-btn">
-                    <i class="bi bi-box-arrow-right"></i> Logout
+                    <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
                 </button>
             </form>
         @else
