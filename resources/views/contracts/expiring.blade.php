@@ -53,7 +53,7 @@
                                     <td>{{ $contract->department }}</td>
                                     <td>{{ $contract->work_location }}</td>
                                     <td>{{ $contract->start_date->format('d M Y') }}</td>
-                                    <td>{{ $contract->end_date->format('d M Y') }}</td>
+                                    <td>{{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</td>
                                     <td>
                                         <span class="badge {{ $contract->daysUntilExpiration() <= 7 ? 'bg-danger' : 'bg-warning text-dark' }}">
                                             <i class="bi bi-clock"></i> {{ $contract->daysUntilExpiration() }} days

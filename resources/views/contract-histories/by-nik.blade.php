@@ -89,7 +89,7 @@
                                             <p>
                                                 <i class="bi bi-calendar-check text-success"></i> {{ $history->start_date->format('d M Y') }} 
                                                 <i class="bi bi-arrow-right"></i> 
-                                                <i class="bi bi-calendar-x text-danger"></i> {{ $history->end_date->format('d M Y') }}
+                                                <i class="bi bi-calendar-x text-danger"></i> {{ $history->end_date ? $history->end_date->format('d M Y') : 'Permanent (KPP)' }}
                                             </p>
                                         </div>
                                         <div class="col-md-6">

@@ -15,14 +15,18 @@ return new class extends Migration
             $table->id();
             $table->string('employee_name');
             $table->string('nik')->unique();
+            $table->string('nomor_kontrak')->unique();
             $table->date('birthdate');
             $table->string('birthplace');
             $table->text('address');
             $table->string('job_position');
+            $table->string('point_of_hire');
+            $table->enum('contract_type', ['Kontrak', 'KPP'])->default('Kontrak');
             $table->date('start_date');
-            $table->date('end_date');
+            $table->date('end_date')->nullable();
             $table->string('department');
             $table->string('work_location');
+            $table->string('file_contract')->nullable();
             $table->timestamps();
         });
     }

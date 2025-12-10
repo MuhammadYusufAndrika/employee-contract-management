@@ -12,14 +12,18 @@ class Contract extends Model
     protected $fillable = [
         'employee_name',
         'nik',
+        'nomor_kontrak',
         'birthdate',
         'birthplace',
         'address',
         'job_position',
+        'point_of_hire',
+        'contract_type',
         'start_date',
         'end_date',
         'department',
         'work_location',
+        'file_contract',
     ];
 
     protected $casts = [
@@ -46,6 +50,10 @@ class Contract extends Model
      */
     public function isExpiringSoon(): bool
     {
+        if (!$this->end_date) {
+            return false; // Permanent contracts don't expire
+        }
+
         $today = Carbon::today();
         $thirtyDaysFromNow = Carbon::today()->addDays(30);
 
@@ -57,6 +65,10 @@ class Contract extends Model
      */
     public function daysUntilExpiration(): int
     {
+        if (!$this->end_date) {
+            return 0; // Permanent contract
+        }
+
         return Carbon::today()->diffInDays($this->end_date, false);
     }
 
@@ -76,14 +88,17 @@ class Contract extends Model
         return $this->histories()->create([
             'employee_name' => $this->employee_name,
             'nik' => $this->nik,
+            'nomor_kontrak' => $this->nomor_kontrak,
             'birthdate' => $this->birthdate,
             'birthplace' => $this->birthplace,
             'address' => $this->address,
             'job_position' => $this->job_position,
+            'contract_type' => $this->contract_type,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'department' => $this->department,
             'work_location' => $this->work_location,
+            'file_contract' => $this->file_contract,
             'action_type' => $actionType,
             'notes' => $notes,
         ]);

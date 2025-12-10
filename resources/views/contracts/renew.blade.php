@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-md-6">
                     <p><strong>Current Start Date:</strong> {{ $contract->start_date->format('d M Y') }}</p>
-                    <p><strong>Current End Date:</strong> {{ $contract->end_date->format('d M Y') }}</p>
+                    <p><strong>Current End Date:</strong> {{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent (KPP)' }}</p>
                     <p><strong>Department:</strong> {{ $contract->department }}</p>
                 </div>
             </div>
@@ -51,12 +51,27 @@
                     <h5 class="mb-0"><i class="bi bi-arrow-repeat"></i> New Contract Period</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('contracts.process-renewal', $contract) }}" method="POST">
+                    <form action="{{ route('contracts.process-renewal', $contract) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
                         <div class="alert alert-warning">
                             <i class="bi bi-exclamation-triangle"></i> <strong>Note:</strong> Renewing this contract will save the current contract information to history and update with new dates.
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nomor_kontrak" class="form-label">New Contract Number <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('nomor_kontrak') is-invalid @enderror" 
+                                   id="nomor_kontrak" 
+                                   name="nomor_kontrak" 
+                                   value="{{ old('nomor_kontrak') }}" 
+                                   placeholder="e.g., CTR-2025-002"
+                                   required>
+                            <small class="text-muted">Current: <strong>{{ $contract->nomor_kontrak }}</strong></small>
+                            @error('nomor_kontrak')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="row">
@@ -87,6 +102,27 @@
                                 @enderror
                                 <small class="text-muted">Suggested: {{ $contract->end_date->addYear()->format('d M Y') }}</small>
                             </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="file_contract" class="form-label">New Contract File (PDF)</label>
+                            @if($contract->file_contract)
+                                <div class="mb-2">
+                                    <span class="text-muted">Current PDF:</span>
+                                    <a href="{{ asset('storage/' . $contract->file_contract) }}" target="_blank" class="btn btn-sm btn-info ms-2">
+                                        <i class="bi bi-file-pdf"></i> View Current PDF
+                                    </a>
+                                </div>
+                            @endif
+                            <input type="file" 
+                                   class="form-control @error('file_contract') is-invalid @enderror" 
+                                   id="file_contract" 
+                                   name="file_contract" 
+                                   accept=".pdf">
+                            <small class="form-text text-muted">Upload new contract PDF file (max 5MB) - Leave empty to keep current file</small>
+                            @error('file_contract')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">

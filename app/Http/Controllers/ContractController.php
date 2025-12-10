@@ -12,10 +12,53 @@ class ContractController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $contracts = Contract::orderBy('end_date', 'desc')->paginate(15);
-        return view('contracts.index', compact('contracts'));
+        $query = Contract::query();
+
+        // Search by employee name or NIK
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('employee_name', 'like', '%' . $search . '%')
+                    ->orWhere('nik', 'like', '%' . $search . '%')
+                    ->orWhere('nomor_kontrak', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Filter by work location
+        if ($request->filled('work_location')) {
+            $query->where('work_location', $request->work_location);
+        }
+
+        // Filter by department
+        if ($request->filled('department')) {
+            $query->where('department', $request->department);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $today = now();
+            switch ($request->status) {
+                case 'active':
+                    $query->where('end_date', '>', $today->copy()->addDays(30));
+                    break;
+                case 'expiring':
+                    $query->whereBetween('end_date', [$today, $today->copy()->addDays(30)]);
+                    break;
+                case 'expired':
+                    $query->where('end_date', '<', $today);
+                    break;
+            }
+        }
+
+        $contracts = $query->orderBy('end_date', 'desc')->paginate(15)->withQueryString();
+
+        // Get unique values for filters
+        $workLocations = Contract::distinct()->pluck('work_location')->sort();
+        $departments = Contract::distinct()->pluck('department')->sort();
+
+        return view('contracts.index', compact('contracts', 'workLocations', 'departments'));
     }
 
     /**
@@ -31,10 +74,19 @@ class ContractController extends Controller
      */
     public function store(StoreContractRequest $request)
     {
-        $contract = Contract::create($request->validated());
+        $data = $request->validated();
 
-        // Create history record for new contract
-        $contract->createHistory('created', 'Initial contract created');
+        // Handle file upload
+        if ($request->hasFile('file_contract')) {
+            $file = $request->file('file_contract');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $data['file_contract'] = $file->storeAs('contracts', $filename, 'public');
+        }
+
+        $contract = Contract::create($data);
+
+        // Don't create history for initial contract creation
+        // History is only tracked for renewals
 
         return redirect()->route('contracts.index')
             ->with('success', 'Contract created successfully.');
@@ -61,10 +113,20 @@ class ContractController extends Controller
      */
     public function update(UpdateContractRequest $request, Contract $contract)
     {
-        $contract->update($request->validated());
+        $data = $request->validated();
 
-        // Create history record for update
-        $contract->createHistory('updated', 'Contract information updated');
+        // Handle file upload
+        if ($request->hasFile('file_contract')) {
+            // Don't delete old file - keep it for history records
+            $file = $request->file('file_contract');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $data['file_contract'] = $file->storeAs('contracts', $filename, 'public');
+        }
+
+        $contract->update($data);
+
+        // Don't create history for updates
+        // History is only tracked for renewals
 
         return redirect()->route('contracts.index')
             ->with('success', 'Contract updated successfully.');
@@ -104,19 +166,33 @@ class ContractController extends Controller
     public function processRenewal(Request $request, Contract $contract)
     {
         $request->validate([
+            'nomor_kontrak' => 'required|string|max:255|unique:contracts,nomor_kontrak,' . $contract->id,
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
+            'file_contract' => 'nullable|file|mimes:pdf|max:5120',
             'notes' => 'nullable|string',
         ]);
 
-        // Create history record for old contract
+        // Create history record for old contract (before updating)
         $contract->createHistory('renewed', 'Contract renewed - ' . ($request->notes ?? 'No additional notes'));
 
-        // Update contract with new dates
-        $contract->update([
+        // Prepare update data
+        $data = [
+            'nomor_kontrak' => $request->nomor_kontrak,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-        ]);
+        ];
+
+        // Handle file upload
+        if ($request->hasFile('file_contract')) {
+            // Don't delete old file - keep it for history records
+            $file = $request->file('file_contract');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $data['file_contract'] = $file->storeAs('contracts', $filename, 'public');
+        }
+
+        // Update contract with new data
+        $contract->update($data);
 
         return redirect()->route('contracts.index')
             ->with('success', 'Contract renewed successfully. History has been recorded.');

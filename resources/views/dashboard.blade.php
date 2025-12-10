@@ -109,7 +109,7 @@
                                         </small>
                                     </div>
                                     <p class="mb-1 small">{{ $contract->department }} - {{ $contract->work_location }}</p>
-                                    <small>Expires: {{ $contract->end_date->format('d M Y') }}</small>
+                                    <small>Expires: {{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</small>
                                 </a>
                             @endforeach
                         </div>
@@ -146,7 +146,9 @@
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1">{{ $contract->employee_name }}</h6>
                                         <small>
-                                            @if($contract->end_date < now())
+                                            @if(!$contract->end_date)
+                                                <span class="badge bg-info">Permanent</span>
+                                            @elseif($contract->end_date < now())
                                                 <span class="badge bg-danger">Expired</span>
                                             @elseif($contract->isExpiringSoon())
                                                 <span class="badge bg-warning text-dark">Expiring</span>
@@ -156,7 +158,7 @@
                                         </small>
                                     </div>
                                     <p class="mb-1 small">{{ $contract->department }} - {{ $contract->work_location }}</p>
-                                    <small class="text-muted">{{ $contract->start_date->format('d M Y') }} - {{ $contract->end_date->format('d M Y') }}</small>
+                                    <small class="text-muted">{{ $contract->start_date->format('d M Y') }} - {{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</small>
                                 </a>
                             @endforeach
                         </div>

@@ -77,17 +77,23 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <strong>Contract Number:</strong><br>
+                    <span class="text-primary"><strong>{{ $contract->nomor_kontrak }}</strong></span>
+                </div>
+                <div class="col-md-3">
                     <strong>Start Date:</strong><br>
                     <span class="text-muted">{{ $contract->start_date->format('d M Y') }}</span>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <strong>End Date:</strong><br>
-                    <span class="text-muted">{{ $contract->end_date->format('d M Y') }}</span>
+                    <span class="text-muted">{{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent (KPP)' }}</span>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <strong>Status:</strong><br>
-                    @if($contract->end_date < now())
+                    @if(!$contract->end_date)
+                        <span class="badge bg-info fs-6">Permanent</span>
+                    @elseif($contract->end_date < now())
                         <span class="badge bg-danger fs-6">Expired</span>
                     @elseif($contract->isExpiringSoon())
                         <span class="badge bg-warning text-dark fs-6">
@@ -98,6 +104,16 @@
                     @endif
                 </div>
             </div>
+            @if($contract->file_contract)
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <strong>Contract PDF:</strong><br>
+                        <a href="{{ asset('storage/' . $contract->file_contract) }}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                            <i class="bi bi-file-pdf"></i> View Current Contract PDF
+                        </a>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -146,7 +162,11 @@
                                         <div class="col-md-6">
                                             <table class="table table-sm table-borderless">
                                                 <tr>
-                                                    <th width="45%">Department:</th>
+                                                    <th width="45%">Contract Number:</th>
+                                                    <td><span class="text-primary"><strong>{{ $history->nomor_kontrak }}</strong></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Department:</th>
                                                     <td>{{ $history->department }}</td>
                                                 </tr>
                                                 <tr>
@@ -175,6 +195,16 @@
                                                         {{ \Carbon\Carbon::parse($history->start_date)->diffInDays(\Carbon\Carbon::parse($history->end_date)) }} days
                                                     </td>
                                                 </tr>
+                                                @if($history->file_contract)
+                                                    <tr>
+                                                        <th>Contract PDF:</th>
+                                                        <td>
+                                                            <a href="{{ asset('storage/' . $history->file_contract) }}" target="_blank" class="btn btn-sm btn-info">
+                                                                <i class="bi bi-file-pdf"></i> View PDF
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endif
                                             </table>
                                         </div>
                                     </div>

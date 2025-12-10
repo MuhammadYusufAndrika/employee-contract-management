@@ -79,8 +79,8 @@
                                     </td>
                                     <td>
                                         <small>
-                                            {{ $history->start_date->format('d M Y') }} -<br>
-                                            {{ $history->end_date->format('d M Y') }}
+                                            {{ $history->start_date->format('d M Y') }} - 
+                                            {{ $history->end_date ? $history->end_date->format('d M Y') : 'Permanent' }}
                                         </small>
                                     </td>
                                     <td>{{ $history->job_position }}</td>
