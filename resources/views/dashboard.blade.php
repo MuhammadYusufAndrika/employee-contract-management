@@ -3,14 +3,6 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
-            <p class="text-muted">Welcome back, {{ Auth::user()->name }}!</p>
-        </div>
-    </div>
-
     @php
         $totalContracts = \App\Models\Contract::count();
         $activeContracts = \App\Models\Contract::where('end_date', '>=', now())->count();
@@ -213,5 +205,4 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
