@@ -88,8 +88,6 @@ class ContractController extends Controller
 
         $contract = Contract::create($data);
 
-        // Don't create history for initial contract creation
-        // History is only tracked for renewals
 
         return redirect()->route('contracts.index')
             ->with('success', 'Contract created successfully.');

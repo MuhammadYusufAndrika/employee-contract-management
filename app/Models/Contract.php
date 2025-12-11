@@ -95,6 +95,7 @@ class Contract extends Model
             'job_position' => $this->job_position,
             'contract_type' => $this->contract_type,
             'start_date' => $this->start_date,
+            'point_of_hire' => $this->point_of_hire,
             'end_date' => $this->end_date,
             'department' => $this->department,
             'work_location' => $this->work_location,
