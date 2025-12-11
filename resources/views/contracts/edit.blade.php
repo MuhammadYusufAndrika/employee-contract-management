@@ -109,6 +109,26 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="file_cv" class="form-label">CV File (PDF)</label>
+                            @if($contract->file_cv)
+                                <div class="mb-2">
+                                    <a href="{{ asset('storage/' . $contract->file_cv) }}" target="_blank" class="btn btn-sm btn-info">
+                                        <i class="bi bi-file-pdf"></i> View Current CV
+                                    </a>
+                                </div>
+                            @endif
+                            <input type="file" 
+                                   class="form-control @error('file_cv') is-invalid @enderror" 
+                                   id="file_cv" 
+                                   name="file_cv" 
+                                   accept=".pdf">
+                            <small class="form-text text-muted">Upload new CV PDF file (max 5MB) - Leave empty to keep current file</small>
+                            @error('file_cv')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <hr class="my-4">
                         <h5 class="mb-3"><i class="bi bi-briefcase"></i> Employment Information</h5>
                         

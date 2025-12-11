@@ -18,6 +18,7 @@ class Contract extends Model
         'address',
         'job_position',
         'point_of_hire',
+        'file_cv',
         'TMT_awal',
         'contract_type',
         'start_date',

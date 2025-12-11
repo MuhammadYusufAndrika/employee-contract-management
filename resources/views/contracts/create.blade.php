@@ -108,6 +108,19 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="file_cv" class="form-label">CV File (PDF)</label>
+                            <input type="file" 
+                                   class="form-control @error('file_cv') is-invalid @enderror" 
+                                   id="file_cv" 
+                                   name="file_cv" 
+                                   accept=".pdf">
+                            <small class="form-text text-muted">Upload CV PDF file (max 5MB)</small>
+                            @error('file_cv')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <hr class="my-4">
                         <h5 class="mb-3"><i class="bi bi-briefcase"></i> Employment Information</h5>
 

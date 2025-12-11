@@ -30,6 +30,7 @@ class UpdateContractRequest extends FormRequest
             'address' => 'required|string',
             'job_position' => 'required|string|max:255',
             'point_of_hire' => 'required|string|max:255',
+            'file_cv' => 'nullable|file|mimes:pdf|max:5120',
             'TMT_awal' => 'required|date',
             'contract_type' => 'required|in:Kontrak,KPP',
             'start_date' => 'required|date',

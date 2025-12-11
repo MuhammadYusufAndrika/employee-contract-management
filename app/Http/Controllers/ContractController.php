@@ -79,7 +79,14 @@ class ContractController extends Controller
     {
         $data = $request->validated();
 
-        // Handle file upload
+        // Handle CV file upload
+        if ($request->hasFile('file_cv')) {
+            $file = $request->file('file_cv');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $data['file_cv'] = $file->storeAs('cvs', $filename, 'public');
+        }
+
+        // Handle contract file upload
         if ($request->hasFile('file_contract')) {
             $file = $request->file('file_contract');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -116,7 +123,15 @@ class ContractController extends Controller
     {
         $data = $request->validated();
 
-        // Handle file upload
+        // Handle CV file upload
+        if ($request->hasFile('file_cv')) {
+            // Don't delete old file - keep it for history records
+            $file = $request->file('file_cv');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $data['file_cv'] = $file->storeAs('cvs', $filename, 'public');
+        }
+
+        // Handle contract file upload
         if ($request->hasFile('file_contract')) {
             // Don't delete old file - keep it for history records
             $file = $request->file('file_contract');

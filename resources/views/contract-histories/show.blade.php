@@ -75,6 +75,16 @@
                     </table>
                 </div>
             </div>
+            @if($contract->file_cv)
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <strong>CV Karyawan:</strong><br>
+                        <a href="{{ asset('storage/' . $contract->file_cv) }}" target="_blank" class="btn btn-sm btn-info mt-2">
+                            <i class="bi bi-file-pdf"></i> View CV PDF
+                        </a>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 
