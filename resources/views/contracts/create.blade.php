@@ -53,6 +53,19 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="TMT_awal" class="form-label">TMT Awal (Effective Start Date) <span class="text-danger">*</span></label>
+                            <input type="date" 
+                                   class="form-control @error('TMT_awal') is-invalid @enderror" 
+                                   id="TMT_awal" 
+                                   name="TMT_awal" 
+                                   value="{{ old('TMT_awal') }}" 
+                                   required>
+                            @error('TMT_awal')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="birthplace" class="form-label">Birth Place <span class="text-danger">*</span></label>

@@ -55,15 +55,14 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="nomor_kontrak" class="form-label">Contract Number <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control @error('nomor_kontrak') is-invalid @enderror" 
-                                   id="nomor_kontrak" 
-                                   name="nomor_kontrak" 
-                                   value="{{ old('nomor_kontrak', $contract->nomor_kontrak) }}" 
-                                   placeholder="e.g., CTR-2025-001"
+                            <label for="TMT_awal" class="form-label">TMT Awal (Effective Start Date) <span class="text-danger">*</span></label>
+                            <input type="date" 
+                                   class="form-control @error('TMT_awal') is-invalid @enderror" 
+                                   id="TMT_awal" 
+                                   name="TMT_awal" 
+                                   value="{{ old('TMT_awal', $contract->TMT_awal ? $contract->TMT_awal->format('Y-m-d') : '') }}" 
                                    required>
-                            @error('nomor_kontrak')
+                            @error('TMT_awal')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -112,6 +111,20 @@
 
                         <hr class="my-4">
                         <h5 class="mb-3"><i class="bi bi-briefcase"></i> Employment Information</h5>
+                        
+                        <div class="mb-3">
+                            <label for="nomor_kontrak" class="form-label">Contract Number <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('nomor_kontrak') is-invalid @enderror" 
+                                   id="nomor_kontrak" 
+                                   name="nomor_kontrak" 
+                                   value="{{ old('nomor_kontrak', $contract->nomor_kontrak) }}" 
+                                   placeholder="e.g., CTR-2025-001"
+                                   required>
+                            @error('nomor_kontrak')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
                         <div class="mb-3">
                             <label for="job_position" class="form-label">Job Position <span class="text-danger">*</span></label>

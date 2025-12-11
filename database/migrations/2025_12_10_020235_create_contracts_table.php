@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('address');
             $table->string('job_position');
             $table->string('point_of_hire');
+            $table->date('TMT_awal');
             $table->enum('contract_type', ['Kontrak', 'KPP'])->default('Kontrak');
             $table->date('start_date');
             $table->date('end_date')->nullable();
