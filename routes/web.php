@@ -1,18 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ContractHistoryController;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/linkstorage', function () {
-    Artisan::call('storage:link');
-});
-
-Route::get('/linkstorage', function () {
-    Artisan::call('storage:link');
-});
 
 Route::get('/', function () {
     return redirect()->route('login');
