@@ -88,6 +88,7 @@
                                 <th>Job Position</th>
                                 <th>Department</th>
                                 <th>Work Location</th>
+                                <th>TMT Awal</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Status</th>
@@ -113,6 +114,7 @@
                                     <td>{{ $contract->job_position }}</td>
                                     <td>{{ $contract->department }}</td>
                                     <td>{{ $contract->work_location }}</td>
+                                    <td>{{ $contract->TMT_awal ? $contract->TMT_awal->format('d M Y') : '-' }}</td>
                                     <td>{{ $contract->start_date->format('d M Y') }}</td>
                                     <td>{{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</td>
                                     <td>

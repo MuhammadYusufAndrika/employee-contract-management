@@ -53,6 +53,7 @@ class ContractFactory extends Factory
                 'Regional Office Surabaya',
                 'Regional Office Bandung'
             ]),
+            'TMT_awal' => $this->faker->dateTimeBetween('-2 years', 'now'),
             'contract_type' => $contractType,
             'start_date' => $startDate,
             'end_date' => $endDate,

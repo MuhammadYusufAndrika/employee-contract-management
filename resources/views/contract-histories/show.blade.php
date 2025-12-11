@@ -57,6 +57,10 @@
                             <td>{{ $contract->point_of_hire }}</td>
                         </tr>
                         <tr>
+                            <th>TMT Awal:</th>
+                            <td>{{ $contract->TMT_awal ? $contract->TMT_awal->format('d M Y') : '-' }}</td>
+                        </tr>
+                        <tr>
                             <th>Department:</th>
                             <td>{{ $contract->department }}</td>
                         </tr>
