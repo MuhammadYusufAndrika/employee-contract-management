@@ -47,6 +47,12 @@
                 @endif
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{{ route('documents.index') }}" class="nav-link {{ request()->routeIs('documents.*') ? 'active' : '' }}">
+                <i class="bi bi-book"></i>
+                <span>Document Library</span>
+            </a>
+        </li>
     </ul>
     
     <div class="sidebar-footer">
