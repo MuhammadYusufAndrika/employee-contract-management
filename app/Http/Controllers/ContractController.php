@@ -206,7 +206,7 @@ class ContractController extends Controller
             'department' => $request->department,
             'work_location' => $request->work_location,
             'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
+            'end_date' => $request->contract_type === 'KPP' ? null : $request->end_date,
         ];
 
         // Handle file upload

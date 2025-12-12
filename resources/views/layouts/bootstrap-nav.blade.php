@@ -18,6 +18,12 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="{{ route('employees.index') }}" class="nav-link {{ request()->routeIs('employees.*') ? 'active' : '' }}">
+                <i class="bi bi-people-fill"></i>
+                <span>Employees</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="{{ route('contracts.index') }}" class="nav-link {{ request()->routeIs('contracts.*') && !request()->routeIs('contracts.expiring') ? 'active' : '' }}">
                 <i class="bi bi-file-text"></i>
                 <span>Contracts</span>

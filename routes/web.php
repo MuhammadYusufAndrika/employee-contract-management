@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ContractHistoryController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,6 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/contract-histories', [ContractHistoryController::class, 'index'])->name('contract-histories.index');
     Route::get('/contract-histories/by-nik', [ContractHistoryController::class, 'byNik'])->name('contract-histories.by-nik');
     Route::get('/contract-histories/{contract}', [ContractHistoryController::class, 'show'])->name('contract-histories.show');
+
+    // Employee routes
+    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
 });
 
 require __DIR__ . '/auth.php';
