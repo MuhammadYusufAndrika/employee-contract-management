@@ -50,9 +50,21 @@
         <li class="nav-item">
             <a href="{{ route('documents.index') }}" class="nav-link {{ request()->routeIs('documents.*') ? 'active' : '' }}">
                 <i class="bi bi-book"></i>
-                <span>Document Library</span>
+                <span>Document Repository</span>
             </a>
         </li>
+        
+        @if(auth()->user()->isAdmin())
+            <li class="nav-item nav-divider">
+                <hr class="my-2" style="border-color: rgba(255,255,255,0.1);">
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                    <i class="bi bi-shield-fill-check"></i>
+                    <span>User Management</span>
+                </a>
+            </li>
+        @endif
     </ul>
     
     <div class="sidebar-footer">
@@ -62,6 +74,11 @@
                 <div>
                     <div class="user-name">{{ Auth::user()->name }}</div>
                     <div class="user-email">{{ Auth::user()->email }}</div>
+                    @if(Auth::user()->isAdmin())
+                        <span class="badge bg-danger mt-1" style="font-size: 0.7rem;">
+                            <i class="bi bi-shield-fill-check"></i> Admin
+                        </span>
+                    @endif
                 </div>
             </div>
             <a href="{{ route('profile.edit') }}" class="btn btn-outline-light btn-sm mt-2 w-100">

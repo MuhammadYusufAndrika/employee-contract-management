@@ -47,6 +47,10 @@ class DocumentController extends Controller
     
     public function create()
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can add documents.');
+        }
+
         return view('documents.create');
     }
 
@@ -55,6 +59,10 @@ class DocumentController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can add documents.');
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'document_number' => 'nullable|string|max:100',
@@ -107,6 +115,10 @@ class DocumentController extends Controller
      */
     public function edit(Document $document)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can edit documents.');
+        }
+
         return view('documents.edit', compact('document'));
     }
 
@@ -115,6 +127,10 @@ class DocumentController extends Controller
      */
     public function update(Request $request, Document $document)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can update documents.');
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'document_number' => 'nullable|string|max:100',
@@ -153,6 +169,10 @@ class DocumentController extends Controller
      */
     public function destroy(Document $document)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can delete documents.');
+        }
+
         // Delete file from storage
         if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
             Storage::disk('public')->delete($document->file_path);

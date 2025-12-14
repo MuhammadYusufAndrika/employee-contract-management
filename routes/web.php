@@ -42,6 +42,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/documents/{document}', [App\Http\Controllers\DocumentController::class, 'update'])->name('documents.update');
     Route::delete('/documents/{document}', [App\Http\Controllers\DocumentController::class, 'destroy'])->name('documents.destroy');
     Route::get('/documents/{document}', [App\Http\Controllers\DocumentController::class, 'show'])->name('documents.show');
+
+    // User Management routes (Admin only)
+    Route::middleware('admin')->group(function () {
+        Route::resource('users', App\Http\Controllers\UserController::class);
+    });
 });
 
 require __DIR__ . '/auth.php';

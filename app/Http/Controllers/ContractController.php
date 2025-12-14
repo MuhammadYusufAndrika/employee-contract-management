@@ -69,6 +69,10 @@ class ContractController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can create contracts.');
+        }
+
         return view('contracts.create');
     }
 
@@ -77,6 +81,10 @@ class ContractController extends Controller
      */
     public function store(StoreContractRequest $request)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can create contracts.');
+        }
+
         $data = $request->validated();
 
         // Handle CV file upload
@@ -113,6 +121,10 @@ class ContractController extends Controller
      */
     public function edit(Contract $contract)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can edit contracts.');
+        }
+
         return view('contracts.edit', compact('contract'));
     }
 
@@ -121,6 +133,10 @@ class ContractController extends Controller
      */
     public function update(UpdateContractRequest $request, Contract $contract)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can update contracts.');
+        }
+
         $data = $request->validated();
 
         // Handle CV file upload
@@ -153,6 +169,10 @@ class ContractController extends Controller
      */
     public function destroy(Contract $contract)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can delete contracts.');
+        }
+
         $contract->delete();
 
         return redirect()->route('contracts.index')
@@ -173,6 +193,10 @@ class ContractController extends Controller
      */
     public function renew(Contract $contract)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can renew contracts.');
+        }
+
         return view('contracts.renew', compact('contract'));
     }
 
@@ -181,6 +205,10 @@ class ContractController extends Controller
      */
     public function processRenewal(Request $request, Contract $contract)
     {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can process contract renewals.');
+        }
+
         $request->validate([
             'nomor_kontrak' => 'required|string|max:255|unique:contracts,nomor_kontrak,' . $contract->id,
             'job_position' => 'required|string|max:255',

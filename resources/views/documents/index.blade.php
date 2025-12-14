@@ -103,9 +103,11 @@
                     <h2 class="doclib-results-title">Ditemukan {{ $documents->count() }} hasil</h2>
                 </div>
                 <div class="doclib-sort">
-                    <a href="{{ route('documents.create') }}" class="doclib-btn-create">
-                        <i class="bi bi-plus-circle"></i> Add Document
-                    </a>
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('documents.create') }}" class="doclib-btn-create">
+                            <i class="bi bi-plus-circle"></i> Add Document
+                        </a>
+                    @endif
                 </div>
             </div>
 
@@ -126,25 +128,27 @@
                                     @endif
                                     {{ $document->title }}
                                 </a>
-                                <div class="doclib-card-actions">
-                                    <a href="{{ route('documents.edit', $document) }}" 
-                                       class="doclib-btn-action doclib-btn-edit" 
-                                       title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form action="{{ route('documents.destroy', $document) }}" 
-                                          method="POST" 
-                                          style="display: inline;"
-                                          onsubmit="return confirm('Are you sure you want to delete this document?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="doclib-btn-action doclib-btn-delete" 
-                                                title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                                @if(auth()->user()->isAdmin())
+                                    <div class="doclib-card-actions">
+                                        <a href="{{ route('documents.edit', $document) }}" 
+                                           class="doclib-btn-action doclib-btn-edit" 
+                                           title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form action="{{ route('documents.destroy', $document) }}" 
+                                              method="POST" 
+                                              style="display: inline;"
+                                              onsubmit="return confirm('Are you sure you want to delete this document?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="doclib-btn-action doclib-btn-delete" 
+                                                    title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
                             </div>
 
                             @if($document->is_active)

@@ -8,9 +8,11 @@
         <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h2><i class="bi bi-file-text"></i> Employee Contracts</h2>
-                <a href="{{ route('contracts.create') }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Add New Contract
-                </a>
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('contracts.create') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add New Contract
+                    </a>
+                @endif
             </div>
         </div>
     </div>
@@ -136,24 +138,28 @@
                                                     <i class="bi bi-file-pdf"></i>
                                                 </a>
                                             @endif
-                                            <a href="{{ route('contracts.edit', $contract) }}" class="btn btn-sm btn-warning" title="Edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            {{-- @if($contract->isExpiringSoon() || $contract->end_date < now())
-                                                <a href="{{ route('contracts.renew', $contract) }}" class="btn btn-sm btn-info" title="Renew Contract">
-                                                    <i class="bi bi-arrow-clockwise"></i>
-                                                </a>
-                                            @endif --}}
+                                            
                                             <a href="{{ route('contract-histories.show', $contract) }}" class="btn btn-sm btn-secondary" title="View History">
                                                 <i class="bi bi-clock-history"></i>
                                             </a>
-                                            <form action="{{ route('contracts.destroy', $contract) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this contract?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
+                                            
+                                            @if(auth()->user()->isAdmin())
+                                                <a href="{{ route('contracts.edit', $contract) }}" class="btn btn-sm btn-warning" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                {{-- @if($contract->isExpiringSoon() || $contract->end_date < now())
+                                                    <a href="{{ route('contracts.renew', $contract) }}" class="btn btn-sm btn-info" title="Renew Contract">
+                                                        <i class="bi bi-arrow-clockwise"></i>
+                                                    </a>
+                                                @endif --}}
+                                                <form action="{{ route('contracts.destroy', $contract) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this contract?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

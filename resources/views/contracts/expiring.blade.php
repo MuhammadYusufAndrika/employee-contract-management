@@ -62,14 +62,18 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('contracts.renew', $contract) }}" class="btn btn-sm btn-primary" title="Renew Contract">
-                                                <i class="bi bi-arrow-clockwise"></i> Renew
-                                            </a>
-                                            <a href="{{ route('contracts.edit', $contract) }}" class="btn btn-sm btn-warning" title="Edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                        </div>
+                                        @if(auth()->user()->isAdmin())
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ route('contracts.renew', $contract) }}" class="btn btn-sm btn-primary" title="Renew Contract">
+                                                    <i class="bi bi-arrow-clockwise"></i> Renew
+                                                </a>
+                                                <a href="{{ route('contracts.edit', $contract) }}" class="btn btn-sm btn-warning" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            </div>
+                                        @else
+                                            <span class="text-muted">View only</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
