@@ -44,9 +44,7 @@ class DocumentController extends Controller
         return view('documents.index', compact('documents', 'documentTypes', 'themes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         return view('documents.create');
