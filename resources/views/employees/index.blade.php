@@ -125,11 +125,32 @@
                                         @endif
                                     </td>
                                     <td class="emp-td-actions">
-                                        <a href="{{ route('employees.show', $employee) }}" 
-                                           class="btn emp-btn-view btn-sm"
-                                           title="View Employee Details">
-                                            <i class="bi bi-eye"></i> View
-                                        </a>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('employees.show', $employee) }}" 
+                                               class="btn emp-btn-view btn-sm"
+                                               title="View Employee Details">
+                                                <i class="bi bi-eye"></i> View
+                                            </a>
+                                            @if(auth()->user()->isAdmin())
+                                                <a href="{{ route('employees.edit', $employee) }}" 
+                                                   class="btn emp-btn-edit btn-sm"
+                                                   title="Edit Employee">
+                                                    <i class="bi bi-pencil"></i> Edit
+                                                </a>
+                                                <form action="{{ route('employees.destroy', $employee) }}" 
+                                                      method="POST" 
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('Are you sure you want to delete this employee? All associated contracts will also be deleted.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" 
+                                                            class="btn emp-btn-delete btn-sm"
+                                                            title="Delete Employee">
+                                                        <i class="bi bi-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -300,10 +321,54 @@
 }
 
 .emp-btn-view:hover {
+    background-color: #002060;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 61, 165, 0.3);
+}
+
+.emp-btn-edit {
     background-color: #FF6B00;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.375rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.emp-btn-edit:hover {
+    background-color: #e55f00;
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(255, 107, 0, 0.3);
+}
+
+.emp-btn-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.375rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.emp-btn-delete:hover {
+    background-color: #c82333;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.emp-td-actions .btn-group {
+    gap: 0.25rem;
+}
+
+.emp-td-actions .btn-group .btn {
+    white-space: nowrap;
 }
 
 .emp-empty-state {

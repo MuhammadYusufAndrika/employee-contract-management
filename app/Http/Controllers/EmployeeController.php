@@ -61,7 +61,11 @@ class EmployeeController extends Controller
             abort(403, 'Only administrators can create employees.');
         }
 
-        return view('employees.create');
+        // Get data for contract form
+        $departments = \App\Models\Contract::distinct()->pluck('department')->filter()->sort()->values();
+        $workLocations = \App\Models\Contract::distinct()->pluck('work_location')->filter()->sort()->values();
+
+        return view('employees.create', compact('departments', 'workLocations'));
     }
 
     /**
@@ -79,6 +83,7 @@ class EmployeeController extends Controller
             'birthplace' => 'required|string|max:255',
             'birthdate' => 'required|date|before:today',
             'address' => 'required|string',
+            'nomor_hp' => 'nullable|string|max:20',
             'file_cv' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 
@@ -89,10 +94,27 @@ class EmployeeController extends Controller
             $validated['file_cv'] = $file->storeAs('cvs', $filename, 'public');
         }
 
-        Employee::create($validated);
+        $employee = Employee::create($validated);
 
+        // If AJAX request, return JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Employee created successfully!',
+                'employee' => [
+                    'id' => $employee->id,
+                    'employee_name' => $employee->employee_name,
+                    'nik' => $employee->nik,
+                    'birthplace' => $employee->birthplace,
+                    'birthdate' => $employee->birthdate->format('d M Y'),
+                    'address' => $employee->address,
+                ]
+            ]);
+        }
+
+        // Regular redirect for non-AJAX requests
         return redirect()->route('employees.index')
-            ->with('success', 'Employee created successfully.');
+            ->with('success', 'Employee created successfully!');
     }
 
     /**
@@ -103,6 +125,18 @@ class EmployeeController extends Controller
         $contracts = $employee->contracts()->orderBy('start_date', 'desc')->get();
 
         return view('employees.show', compact('employee', 'contracts'));
+    }
+
+    /**
+     * Show success page after creating employee with option to add contract.
+     */
+    public function created(Employee $employee)
+    {
+        // Get data needed for contract form
+        $departments = \App\Models\Contract::distinct()->pluck('department')->filter()->sort()->values();
+        $workLocations = \App\Models\Contract::distinct()->pluck('work_location')->filter()->sort()->values();
+
+        return view('employees.created', compact('employee', 'departments', 'workLocations'));
     }
 
     /**
@@ -132,6 +166,7 @@ class EmployeeController extends Controller
             'birthplace' => 'required|string|max:255',
             'birthdate' => 'required|date|before:today',
             'address' => 'required|string',
+            'nomor_hp' => 'nullable|string|max:20',
             'file_cv' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 

@@ -121,6 +121,23 @@
                                 @enderror
                             </div>
 
+                            <!-- Phone Number -->
+                            <div class="col-md-6">
+                                <label for="nomor_hp" class="form-label fw-semibold">
+                                    <i class="bi bi-telephone-fill text-primary me-1"></i>Phone Number
+                                </label>
+                                <input type="text" 
+                                       class="form-control @error('nomor_hp') is-invalid @enderror" 
+                                       id="nomor_hp" 
+                                       name="nomor_hp" 
+                                       value="{{ old('nomor_hp', $employee->nomor_hp) }}"
+                                       placeholder="e.g., 08123456789"
+                                       maxlength="20">
+                                @error('nomor_hp')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <!-- Address -->
                             <div class="col-12">
                                 <label for="address" class="form-label fw-semibold">

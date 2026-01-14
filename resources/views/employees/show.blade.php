@@ -44,6 +44,10 @@
                             <th class="empd-info-label">Birth Place:</th>
                             <td class="empd-info-value">{{ $employee->birthplace }}</td>
                         </tr>
+                        <tr>
+                            <th class="empd-info-label">Phone Number:</th>
+                            <td class="empd-info-value">{{ $employee->nomor_hp ?? '-' }}</td>
+                        </tr>
                     </table>
                 </div>
                 <div class="col-md-6">

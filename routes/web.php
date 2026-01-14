@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // Employee routes
     Route::resource('employees', EmployeeController::class);
+    Route::get('/employees/{employee}/created', [EmployeeController::class, 'created'])->name('employees.created');
 
     // Document Library routes
     Route::get('/documents', [App\Http\Controllers\DocumentController::class, 'index'])->name('documents.index');

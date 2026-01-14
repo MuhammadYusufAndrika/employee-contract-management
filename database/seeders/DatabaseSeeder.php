@@ -54,6 +54,7 @@ class DatabaseSeeder extends Seeder
                 'birthplace' => fake()->city(),
                 'birthdate' => fake()->dateTimeBetween('-45 years', '-22 years'),
                 'address' => fake()->address(),
+                'nomor_hp' => '08' . fake()->numerify('##########'),
             ]);
 
             // Create 1-3 contracts per employee (showing contract history)

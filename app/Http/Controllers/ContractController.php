@@ -99,6 +99,12 @@ class ContractController extends Controller
 
         $contract = Contract::create($data);
 
+        // Check if this came from employee creation flow
+        if ($request->has('from_employee_creation')) {
+            return redirect()->route('employees.show', $contract->employee)
+                ->with('success', 'Contract created successfully for ' . $contract->employee->employee_name . '.');
+        }
+
         return redirect()->route('contracts.index')
             ->with('success', 'Contract created successfully.');
     }
@@ -171,10 +177,35 @@ class ContractController extends Controller
     /**
      * Display contracts expiring soon.
      */
-    public function expiring()
+    public function expiring(Request $request)
     {
-        $contracts = Contract::expiringWithinDays(30);
-        return view('contracts.expiring', compact('contracts'));
+        // Get period filter (default to 1 month)
+        $period = $request->get('period', '1');
+        
+        // Calculate days based on period
+        $days = match($period) {
+            '1' => 30,      // 1 month
+            '3' => 90,      // 3 months
+            '6' => 180,     // 6 months
+            '12' => 365,    // 1 year
+            '12+' => 9999,  // More than 1 year
+            default => 30,
+        };
+        
+        $query = Contract::with('employee')
+            ->whereNotNull('end_date')
+            ->where('end_date', '>', now());
+        
+        // Apply period filter
+        if ($period === '12+') {
+            $query->where('end_date', '>', now()->addYear());
+        } else {
+            $query->where('end_date', '<=', now()->addDays($days));
+        }
+        
+        $contracts = $query->orderBy('end_date', 'asc')->get();
+        
+        return view('contracts.expiring', compact('contracts', 'period'));
     }
 
     /**

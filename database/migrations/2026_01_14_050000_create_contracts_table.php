@@ -13,15 +13,10 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
-            $table->string('employee_name');
-            $table->string('nik')->unique();
+            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->string('nomor_kontrak')->unique();
-            $table->date('birthdate');
-            $table->string('birthplace');
-            $table->text('address');
             $table->string('job_position');
             $table->string('point_of_hire');
-            $table->string('file_cv')->nullable();
             $table->date('TMT_awal');
             $table->enum('contract_type', ['Kontrak', 'KPP'])->default('Kontrak');
             $table->date('start_date');

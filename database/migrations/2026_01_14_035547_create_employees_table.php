@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('employee_name');
             $table->string('nik', 16)->unique();
             $table->string('birthplace');
+            $table->string('nomor_hp', 20)->nullable();
             $table->date('birthdate');
             $table->text('address');
             $table->string('file_cv')->nullable();

@@ -15,6 +15,7 @@ class Employee extends Model
         'birthplace',
         'birthdate',
         'address',
+        'nomor_hp',
         'file_cv',
     ];
 
