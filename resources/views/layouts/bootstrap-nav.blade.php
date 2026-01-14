@@ -48,6 +48,18 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="{{ route('layoffs.index') }}" class="nav-link {{ request()->routeIs('layoffs.*') ? 'active' : '' }}">
+                <i class="bi bi-person-dash-fill"></i>
+                <span>Layoffs</span>
+                @php
+                    $layoffCount = \App\Models\Layoff::count();
+                @endphp
+                @if($layoffCount > 0)
+                    <span class="badge bg-secondary nav-badge">{{ $layoffCount }}</span>
+                @endif
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="{{ route('documents.index') }}" class="nav-link {{ request()->routeIs('documents.*') ? 'active' : '' }}">
                 <i class="bi bi-book"></i>
                 <span>Document Repository</span>

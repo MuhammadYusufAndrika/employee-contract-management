@@ -17,6 +17,7 @@ class Employee extends Model
         'address',
         'nomor_hp',
         'file_cv',
+        'status',
     ];
 
     protected $casts = [
@@ -31,8 +32,22 @@ class Employee extends Model
         return $this->hasMany(Contract::class);
     }
 
+    /**     * Get the layoff record for this employee
+     */
+    public function layoff()
+    {
+        return $this->hasOne(Layoff::class);
+    }
+
     /**
-     * Get the latest contract for this employee
+     * Check if employee has been laid off
+     */
+    public function isLaidOff()
+    {
+        return $this->layoff()->exists();
+    }
+
+    /**     * Get the latest contract for this employee
      */
     public function latestContract()
     {

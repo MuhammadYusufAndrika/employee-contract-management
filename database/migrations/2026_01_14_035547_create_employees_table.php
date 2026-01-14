@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('birthdate');
             $table->text('address');
             $table->string('file_cv')->nullable();
+            $table->enum('status', ['Active', 'Layoff'])->default('Active');
             $table->timestamps();
         });
     }

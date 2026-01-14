@@ -34,6 +34,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('employees', EmployeeController::class);
     Route::get('/employees/{employee}/created', [EmployeeController::class, 'created'])->name('employees.created');
 
+    // Layoff routes
+    Route::resource('layoffs', App\Http\Controllers\LayoffController::class);
+
     // Document Library routes
     Route::get('/documents', [App\Http\Controllers\DocumentController::class, 'index'])->name('documents.index');
     Route::get('/documents/create', [App\Http\Controllers\DocumentController::class, 'create'])->name('documents.create');

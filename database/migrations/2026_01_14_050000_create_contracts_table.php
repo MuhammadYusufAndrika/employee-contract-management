@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('department');
             $table->string('work_location');
             $table->string('file_contract')->nullable();
+            $table->enum('status', ['Active', 'Terminated', 'Layoff'])->default('Active');
             $table->timestamps();
         });
     }

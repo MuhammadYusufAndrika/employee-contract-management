@@ -102,7 +102,11 @@
                                     </td>
                                     <td class="emp-td-location">{{ $latestContract->work_location ?? '-' }}</td>
                                     <td class="emp-td-status">
-                                        @if(!$latestContract)
+                                        @if($employee->status === 'Layoff')
+                                            <span class="emp-badge emp-badge-laidoff">
+                                                <i class="bi bi-person-dash-fill"></i> Laid Off
+                                            </span>
+                                        @elseif(!$latestContract)
                                             <span class="emp-badge emp-badge-expired">
                                                 <i class="bi bi-dash-circle"></i> No Contract
                                             </span>
@@ -132,23 +136,35 @@
                                                 <i class="bi bi-eye"></i> View
                                             </a>
                                             @if(auth()->user()->isAdmin())
-                                                <a href="{{ route('employees.edit', $employee) }}" 
-                                                   class="btn emp-btn-edit btn-sm"
-                                                   title="Edit Employee">
-                                                    <i class="bi bi-pencil"></i> Edit
-                                                </a>
-                                                <form action="{{ route('employees.destroy', $employee) }}" 
-                                                      method="POST" 
-                                                      class="d-inline"
-                                                      onsubmit="return confirm('Are you sure you want to delete this employee? All associated contracts will also be deleted.');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" 
-                                                            class="btn emp-btn-delete btn-sm"
-                                                            title="Delete Employee">
-                                                        <i class="bi bi-trash"></i> Delete
-                                                    </button>
-                                                </form>
+                                                @if(!$employee->isLaidOff())
+                                                    <a href="{{ route('employees.edit', $employee) }}" 
+                                                       class="btn emp-btn-edit btn-sm"
+                                                       title="Edit Employee">
+                                                        <i class="bi bi-pencil"></i> Edit
+                                                    </a>
+                                                    <a href="{{ route('layoffs.create', ['employee_id' => $employee->id]) }}" 
+                                                       class="btn emp-btn-layoff btn-sm"
+                                                       title="Process Layoff"
+                                                       onclick="return confirm('Are you sure you want to process layoff for {{ $employee->employee_name }}?');">
+                                                        <i class="bi bi-person-x"></i> Layoff
+                                                    </a>
+                                                @else
+                                                    <span class="badge bg-danger">Laid Off</span>
+                                                @endif
+                                                @if(!$employee->isLaidOff())
+                                                    <form action="{{ route('employees.destroy', $employee) }}" 
+                                                          method="POST" 
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('Are you sure you want to delete this employee? All associated contracts will also be deleted.');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" 
+                                                                class="btn emp-btn-delete btn-sm"
+                                                                title="Delete Employee">
+                                                            <i class="bi bi-trash"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             @endif
                                         </div>
                                     </td>
@@ -361,6 +377,34 @@
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.emp-btn-layoff {
+    background: linear-gradient(135deg, #f57c00 0%, #d84315 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.375rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.emp-btn-layoff:hover {
+    background: linear-gradient(135deg, #e55f00 0%, #c62828 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(245, 124, 0, 0.4);
+}
+
+.emp-badge-laidoff {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    border: 1px solid #ef9a9a;
 }
 
 .emp-td-actions .btn-group {

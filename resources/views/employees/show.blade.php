@@ -124,7 +124,11 @@
                 <div class="col-md-12">
                     <div class="empd-contract-item">
                         <strong class="empd-contract-label">Status:</strong><br>
-                        @if(!$latestContract->end_date)
+                        @if($latestContract->status === 'Layoff')
+                            <span class="empd-status-badge empd-status-layoff">
+                                <i class="bi bi-person-dash-fill"></i> Layoff
+                            </span>
+                        @elseif(!$latestContract->end_date)
                             <span class="empd-status-badge empd-status-permanent">Permanent</span>
                         @elseif($latestContract->end_date < now())
                             <span class="empd-status-badge empd-status-expired">Expired</span>
@@ -430,6 +434,12 @@
 .empd-status-expired {
     background-color: #f8d7da;
     color: #721c24;
+}
+
+.empd-status-layoff {
+    background-color: #343a40;
+    color: #ffffff;
+    font-weight: 600;
 }
 
 .empd-history-count {

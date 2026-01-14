@@ -61,6 +61,7 @@
                             <option value="expiring" {{ request('status') == 'expiring' ? 'selected' : '' }}>Expiring Soon</option>
                             <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
                             <option value="permanent" {{ request('status') == 'permanent' ? 'selected' : '' }}>Permanent</option>
+                            <option value="layoff" {{ request('status') == 'layoff' ? 'selected' : '' }}>Layoff</option>
                         </select>
                     </div>
                     <div class="col-md-2 d-flex align-items-end gap-2">
@@ -120,7 +121,11 @@
                                     <td>{{ $contract->start_date->format('d M Y') }}</td>
                                     <td>{{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</td>
                                     <td>
-                                        @if(!$contract->end_date)
+                                        @if($contract->status === 'Layoff')
+                                            <span class="badge bg-dark">
+                                                <i class="bi bi-person-dash-fill"></i> Layoff
+                                            </span>
+                                        @elseif(!$contract->end_date)
                                             <span class="badge bg-info">Permanent</span>
                                         @elseif($contract->end_date < now())
                                             <span class="badge bg-danger">Expired</span>
@@ -131,6 +136,7 @@
                                         @else
                                             <span class="badge bg-success">Active</span>
                                         @endif
+                                    </td>
                                     <td>
                                         <div class="btn-group" role="group">
                                             @if($contract->file_contract)

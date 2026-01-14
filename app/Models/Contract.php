@@ -22,6 +22,7 @@ class Contract extends Model
         'department',
         'work_location',
         'file_contract',
+        'status',
     ];
 
     protected $casts = [
