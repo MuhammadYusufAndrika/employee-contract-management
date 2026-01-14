@@ -181,9 +181,9 @@ class ContractController extends Controller
     {
         // Get period filter (default to 1 month)
         $period = $request->get('period', '1');
-        
+
         // Calculate days based on period
-        $days = match($period) {
+        $days = match ($period) {
             '1' => 30,      // 1 month
             '3' => 90,      // 3 months
             '6' => 180,     // 6 months
@@ -191,20 +191,20 @@ class ContractController extends Controller
             '12+' => 9999,  // More than 1 year
             default => 30,
         };
-        
+
         $query = Contract::with('employee')
             ->whereNotNull('end_date')
             ->where('end_date', '>', now());
-        
+
         // Apply period filter
         if ($period === '12+') {
             $query->where('end_date', '>', now()->addYear());
         } else {
             $query->where('end_date', '<=', now()->addDays($days));
         }
-        
+
         $contracts = $query->orderBy('end_date', 'asc')->get();
-        
+
         return view('contracts.expiring', compact('contracts', 'period'));
     }
 
