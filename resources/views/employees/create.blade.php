@@ -64,8 +64,7 @@
                             <!-- NIK -->
                             <div class="col-md-6">
                                 <label for="nik" class="form-label fw-semibold">
-                                    <i class="bi bi-credit-card-2-front text-primary me-1"></i>NIK (ID Number)
-                                    <span class="text-danger">*</span>
+                                    <i class="bi bi-credit-card-2-front text-primary me-1"></i>NIK (ID Number) <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" 
                                        class="form-control" 
@@ -75,6 +74,20 @@
                                        maxlength="50"
                                        required>
                                 <small class="text-muted">Unique employee identification number</small>
+                            </div>
+
+                            <!-- NID -->
+                            <div class="col-md-6">
+                                <label for="nid" class="form-label fw-semibold">
+                                    <i class="bi bi-building text-primary me-1"></i>NID (Company ID)
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nid" 
+                                       name="nid" 
+                                       placeholder="Enter company ID"
+                                       maxlength="16">
+                                <small class="text-muted">Internal company identification number</small>
                             </div>
 
                             <!-- Birthplace -->

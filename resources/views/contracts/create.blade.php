@@ -207,6 +207,9 @@
     </div>
 </div>
 
+<!-- jQuery (required for Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!-- Select2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
@@ -245,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Contract type and end date toggle
     const contractType = document.getElementById('contract_type');
     const endDateField = document.getElementById('end_date_field');
     const endDateInput = document.getElementById('end_date');
@@ -255,18 +259,24 @@ document.addEventListener('DOMContentLoaded', function() {
             endDateField.style.display = 'none';
             endDateInput.removeAttribute('required');
             endDateInput.value = '';
-            endDateRequired.style.display = 'none';
+            if (endDateRequired) {
+                endDateRequired.style.display = 'none';
+            }
         } else {
             endDateField.style.display = 'block';
             if (contractType.value === 'Kontrak') {
                 endDateInput.setAttribute('required', 'required');
-                endDateRequired.style.display = 'inline';
+                if (endDateRequired) {
+                    endDateRequired.style.display = 'inline';
+                }
             }
         }
     }
 
-    contractType.addEventListener('change', toggleEndDate);
-    toggleEndDate(); // Run on page load
+    if (contractType) {
+        contractType.addEventListener('change', toggleEndDate);
+        toggleEndDate(); // Run on page load
+    }
 });
 </script>
 @endsection

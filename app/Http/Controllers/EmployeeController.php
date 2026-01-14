@@ -80,6 +80,7 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'employee_name' => 'required|string|max:255',
             'nik' => 'required|string|max:50|unique:employees,nik',
+            'nid' => 'nullable|string|max:16|unique:employees,nid',
             'birthplace' => 'required|string|max:255',
             'birthdate' => 'required|date|before:today',
             'address' => 'required|string',
@@ -163,6 +164,7 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'employee_name' => 'required|string|max:255',
             'nik' => 'required|string|max:50|unique:employees,nik,' . $employee->id,
+            'nid' => 'nullable|string|max:16|unique:employees,nid,' . $employee->id,
             'birthplace' => 'required|string|max:255',
             'birthdate' => 'required|date|before:today',
             'address' => 'required|string',

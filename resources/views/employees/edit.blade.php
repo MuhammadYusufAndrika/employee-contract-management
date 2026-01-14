@@ -85,6 +85,24 @@
                                 <small class="text-muted">Unique employee identification number</small>
                             </div>
 
+                            <!-- NID -->
+                            <div class="col-md-6">
+                                <label for="nid" class="form-label fw-semibold">
+                                    <i class="bi bi-building text-primary me-1"></i>NID (Company ID)
+                                </label>
+                                <input type="text" 
+                                       class="form-control @error('nid') is-invalid @enderror" 
+                                       id="nid" 
+                                       name="nid" 
+                                       value="{{ old('nid', $employee->nid) }}"
+                                       placeholder="Enter company ID"
+                                       maxlength="16">
+                                @error('nid')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Internal company identification number</small>
+                            </div>
+
                             <!-- Birthplace -->
                             <div class="col-md-6">
                                 <label for="birthplace" class="form-label fw-semibold">
