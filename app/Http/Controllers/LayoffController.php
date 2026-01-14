@@ -53,7 +53,7 @@ class LayoffController extends Controller
 
         if ($employeeId) {
             $employee = Employee::findOrFail($employeeId);
-            
+
             // Check if employee already laid off
             if ($employee->isLaidOff()) {
                 return redirect()->route('employees.index')
@@ -97,10 +97,10 @@ class LayoffController extends Controller
         $validated['processed_by'] = auth()->id();
 
         $layoff = Layoff::create($validated);
-        
+
         // Update employee status to Layoff
         $layoff->employee->update(['status' => 'Layoff']);
-        
+
         // Update all employee's contracts to Layoff status
         $layoff->employee->contracts()->update(['status' => 'Layoff']);
 
@@ -173,7 +173,7 @@ class LayoffController extends Controller
 
         // Change employee status back to Active
         $layoff->employee->update(['status' => 'Active']);
-        
+
         // Restore all employee's contracts to Active status
         $layoff->employee->contracts()->update(['status' => 'Active']);
 

@@ -44,18 +44,18 @@ class ContractController extends Controller
             switch ($request->status) {
                 case 'active':
                     $query->where('status', 'Active')
-                          ->where('end_date', '>', $today->copy()->addDays(30));
+                        ->where('end_date', '>', $today->copy()->addDays(30));
                     break;
                 case 'expiring':
                     $query->where('status', 'Active')
-                          ->whereBetween('end_date', [$today, $today->copy()->addDays(30)]);
+                        ->whereBetween('end_date', [$today, $today->copy()->addDays(30)]);
                     break;
                 case 'expired':
                     $query->where('end_date', '<', $today);
                     break;
                 case 'permanent':
                     $query->where('status', 'Active')
-                          ->whereNull('end_date');
+                        ->whereNull('end_date');
                     break;
                 case 'layoff':
                     $query->where('status', 'Layoff');
