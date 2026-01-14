@@ -60,16 +60,20 @@
                                     name="role" 
                                     required>
                                 <option value="">Select Role</option>
-                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>
-                                    <i class="bi bi-shield-fill-check"></i> Admin - Full Access
+                                <option value="super_admin" {{ old('role') == 'super_admin' ? 'selected' : '' }}>
+                                    <i class="bi bi-star-fill"></i> Super Admin - Full System Access
                                 </option>
-                                <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>
-                                    <i class="bi bi-person"></i> User - Regular Access
+                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>
+                                    <i class="bi bi-shield-fill-check"></i> Admin - Full Access (Except User Management)
+                                </option>
+                                <option value="viewer" {{ old('role') == 'viewer' ? 'selected' : '' }}>
+                                    <i class="bi bi-eye-fill"></i> Viewer - View Only Access
                                 </option>
                             </select>
                             <small class="form-text text-muted">
-                                <strong>Admin:</strong> Full system access, can manage users.<br>
-                                <strong>User:</strong> Only View for All Feature.
+                                <strong>Super Admin:</strong> Full system access including user management.<br>
+                                <strong>Admin:</strong> Full access except user management.<br>
+                                <strong>Viewer:</strong> View only access to all features.
                             </small>
                             @error('role')
                                 <div class="invalid-feedback">{{ $message }}</div>

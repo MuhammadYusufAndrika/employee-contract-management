@@ -17,7 +17,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create default admin user
+        // Create default super admin user
+        User::factory()->create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@example.com',
+            'password' => bcrypt('password'), // Password: password
+            'role' => User::ROLE_SUPER_ADMIN,
+        ]);
+
+        // Create admin user
         User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
@@ -25,19 +33,12 @@ class DatabaseSeeder extends Seeder
             'role' => User::ROLE_ADMIN,
         ]);
 
-        // Create a regular user for testing
+        // Create a viewer user for testing
         User::factory()->create([
-            'name' => 'Regular User',
-            'email' => 'user@example.com',
+            'name' => 'Viewer User',
+            'email' => 'viewer@example.com',
             'password' => bcrypt('password'), // Password: password
-            'role' => User::ROLE_USER,
-        ]);
-
-        // Create additional test user
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'), // Password: password
+            'role' => User::ROLE_VIEWER,
         ]);
 
         // Create employees with contracts

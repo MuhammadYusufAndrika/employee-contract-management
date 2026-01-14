@@ -11,7 +11,7 @@
                     <i class="bi bi-person-x-fill me-2"></i>Layoff Records
                     <span class="badge bg-danger ms-2">{{ $layoffs->total() }}</span>
                 </h2>
-                @if(auth()->user()->isAdmin())
+                @if(auth()->user()->canModify())
                     <a href="{{ route('employees.index') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i>Back to Employees
                     </a>
@@ -132,7 +132,7 @@
                                                title="View Details">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            @if(auth()->user()->isAdmin())
+                                            @if(auth()->user()->canModify())
                                                 <a href="{{ route('layoffs.edit', $layoff) }}" 
                                                    class="btn btn-sm btn-warning"
                                                    title="Edit">

@@ -33,8 +33,12 @@
                             <td class="empd-info-value"><strong>{{ $employee->employee_name }}</strong></td>
                         </tr>
                         <tr>
-                            <th class="empd-info-label">NIK:</th>
+                            <th class="empd-info-label">NIK (ID_Number):</th>
                             <td class="empd-info-value">{{ $employee->nik }}</td>
+                        </tr>
+                        <tr>
+                            <th class="empd-info-label">NID (Company ID):</th>
+                            <td class="empd-info-value">{{ $employee->nid ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th class="empd-info-label">Birth Date:</th>

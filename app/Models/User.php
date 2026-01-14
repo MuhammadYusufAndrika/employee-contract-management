@@ -13,8 +13,9 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     // Role constants
+    const ROLE_SUPER_ADMIN = 'super_admin';
     const ROLE_ADMIN = 'admin';
-    const ROLE_USER = 'user';
+    const ROLE_VIEWER = 'viewer';
 
     /**
      * The attributes that are mass assignable.
@@ -52,18 +53,42 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is admin
+     * Check if user is super admin
      */
-    public function isAdmin(): bool
+    public function isSuperAdmin(): bool
     {
-        return $this->role === self::ROLE_ADMIN;
+        return $this->role === self::ROLE_SUPER_ADMIN;
     }
 
     /**
-     * Check if user is regular user
+     * Check if user is admin (super_admin or admin)
      */
-    public function isUser(): bool
+    public function isAdmin(): bool
     {
-        return $this->role === self::ROLE_USER;
+        return in_array($this->role, [self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN]);
+    }
+
+    /**
+     * Check if user is viewer
+     */
+    public function isViewer(): bool
+    {
+        return $this->role === self::ROLE_VIEWER;
+    }
+
+    /**
+     * Check if user can manage users (only super admin)
+     */
+    public function canManageUsers(): bool
+    {
+        return $this->role === self::ROLE_SUPER_ADMIN;
+    }
+
+    /**
+     * Check if user can edit/delete (admin or super admin)
+     */
+    public function canModify(): bool
+    {
+        return in_array($this->role, [self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN]);
     }
 }

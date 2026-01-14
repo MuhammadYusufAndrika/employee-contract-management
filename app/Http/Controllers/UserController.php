@@ -14,6 +14,10 @@ class UserController extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->canManageUsers()) {
+            abort(403, 'Only super administrators can manage users.');
+        }
+
         $users = User::orderBy('created_at', 'desc')->paginate(15);
         return view('users.index', compact('users'));
     }
@@ -23,6 +27,10 @@ class UserController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->canManageUsers()) {
+            abort(403, 'Only super administrators can manage users.');
+        }
+
         return view('users.create');
     }
 
@@ -31,11 +39,15 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->canManageUsers()) {
+            abort(403, 'Only super administrators can manage users.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => ['required', Rule::in([User::ROLE_ADMIN, User::ROLE_USER])],
+            'role' => ['required', Rule::in([User::ROLE_SUPER_ADMIN, User::ROLE_ADMIN, User::ROLE_VIEWER])],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -43,7 +55,7 @@ class UserController extends Controller
         User::create($validated);
 
         return redirect()->route('users.index')
-                         ->with('success', 'User created successfully!');
+            ->with('success', 'User created successfully!');
     }
 
     /**
@@ -59,6 +71,10 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        if (!auth()->user()->canManageUsers()) {
+            abort(403, 'Only super administrators can manage users.');
+        }
+
         return view('users.edit', compact('user'));
     }
 
@@ -67,11 +83,15 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        if (!auth()->user()->canManageUsers()) {
+            abort(403, 'Only super administrators can manage users.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => ['required', Rule::in([User::ROLE_ADMIN, User::ROLE_USER])],
+            'role' => ['required', Rule::in([User::ROLE_SUPER_ADMIN, User::ROLE_ADMIN, User::ROLE_VIEWER])],
         ]);
 
         // Only update password if provided
@@ -84,7 +104,7 @@ class UserController extends Controller
         $user->update($validated);
 
         return redirect()->route('users.index')
-                         ->with('success', 'User updated successfully!');
+            ->with('success', 'User updated successfully!');
     }
 
     /**
@@ -92,16 +112,19 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if (!auth()->user()->canManageUsers()) {
+            abort(403, 'Only super administrators can manage users.');
+        }
+
         // Prevent admin from deleting themselves
         if ($user->id === auth()->id()) {
             return redirect()->route('users.index')
-                             ->with('error', 'You cannot delete your own account!');
+                ->with('error', 'You cannot delete your own account!');
         }
 
         $user->delete();
 
         return redirect()->route('users.index')
-                         ->with('success', 'User deleted successfully!');
+            ->with('success', 'User deleted successfully!');
     }
 }
-

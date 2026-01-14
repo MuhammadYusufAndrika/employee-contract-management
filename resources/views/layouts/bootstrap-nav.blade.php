@@ -66,7 +66,7 @@
             </a>
         </li>
         
-        @if(auth()->user()->isAdmin())
+        @if(auth()->user()->canManageUsers())
             <li class="nav-item nav-divider">
                 <hr class="my-2" style="border-color: rgba(255,255,255,0.1);">
             </li>
@@ -86,9 +86,17 @@
                 <div>
                     <div class="user-name">{{ Auth::user()->name }}</div>
                     <div class="user-email">{{ Auth::user()->email }}</div>
-                    @if(Auth::user()->isAdmin())
+                    @if(Auth::user()->isSuperAdmin())
                         <span class="badge bg-danger mt-1" style="font-size: 0.7rem;">
+                            <i class="bi bi-star-fill"></i> Super Admin
+                        </span>
+                    @elseif(Auth::user()->isAdmin())
+                        <span class="badge bg-warning mt-1" style="font-size: 0.7rem;">
                             <i class="bi bi-shield-fill-check"></i> Admin
+                        </span>
+                    @else
+                        <span class="badge bg-info mt-1" style="font-size: 0.7rem;">
+                            <i class="bi bi-eye-fill"></i> Viewer
                         </span>
                     @endif
                 </div>

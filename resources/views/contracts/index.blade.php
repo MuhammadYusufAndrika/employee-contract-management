@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h2><i class="bi bi-file-text"></i> Employee Contracts</h2>
-                @if(auth()->user()->isAdmin())
+                @if(auth()->user()->canModify())
                     <a href="{{ route('contracts.create') }}" class="btn btn-primary">
                         <i class="bi bi-plus-circle"></i> Add New Contract
                     </a>
@@ -113,7 +113,16 @@
                                         <small class="text-muted">{{ $contract->employee->birthplace ?? 'N/A' }}, {{ $contract->employee->birthdate ? $contract->employee->birthdate->format('d M Y') : 'N/A' }}</small>
                                     </td>
                                     <td><small>{{ $contract->employee->nik ?? 'N/A' }}</small></td>
-                                    <td><small class="text-primary"><strong>{{ $contract->nomor_kontrak }}</strong></small></td>
+                                    <td>
+                                        @if($contract->file_contract)
+                                            <a href="{{ asset('storage/' . $contract->file_contract) }}" target="_blank" class="text-primary text-decoration-none">
+                                                <small><strong>{{ $contract->nomor_kontrak }}</strong></small>
+                                                <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                            </a>
+                                        @else
+                                            <small class="text-muted"><strong>{{ $contract->nomor_kontrak }}</strong></small>
+                                        @endif
+                                    </td>
                                     <td>{{ $contract->job_position }}</td>
                                     <td>{{ $contract->department }}</td>
                                     <td>{{ $contract->work_location }}</td>
@@ -149,7 +158,7 @@
                                                 <i class="bi bi-clock-history"></i>
                                             </a>
                                             
-                                            @if(auth()->user()->isAdmin())
+                                            @if(auth()->user()->canModify())
                                                 <a href="{{ route('contracts.edit', $contract) }}" class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>

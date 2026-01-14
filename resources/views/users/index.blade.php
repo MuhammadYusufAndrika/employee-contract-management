@@ -55,13 +55,17 @@
                                 </td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    @if($user->isAdmin())
+                                    @if($user->isSuperAdmin())
                                         <span class="badge bg-danger">
+                                            <i class="bi bi-star-fill"></i> Super Admin
+                                        </span>
+                                    @elseif($user->isAdmin())
+                                        <span class="badge bg-warning">
                                             <i class="bi bi-shield-fill-check"></i> Admin
                                         </span>
                                     @else
-                                        <span class="badge bg-secondary">
-                                            <i class="bi bi-person"></i> User
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-eye-fill"></i> Viewer
                                         </span>
                                     @endif
                                 </td>

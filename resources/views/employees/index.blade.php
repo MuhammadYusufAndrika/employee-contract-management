@@ -10,7 +10,7 @@
                 <h2 class="emp-page-title">
                     <i class="bi bi-people-fill"></i> Employee List
                 </h2>
-                @if(auth()->user()->isAdmin())
+                @if(auth()->user()->canModify())
                     <a href="{{ route('employees.create') }}" class="btn btn-primary">
                         <i class="bi bi-person-plus-fill me-1"></i>Add New Employee
                     </a>
@@ -135,7 +135,7 @@
                                                title="View Employee Details">
                                                 <i class="bi bi-eye"></i> View
                                             </a>
-                                            @if(auth()->user()->isAdmin())
+                                            @if(auth()->user()->canModify())
                                                 @if(!$employee->isLaidOff())
                                                     <a href="{{ route('employees.edit', $employee) }}" 
                                                        class="btn emp-btn-edit btn-sm"

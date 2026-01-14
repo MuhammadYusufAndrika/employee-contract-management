@@ -103,7 +103,7 @@
                     <h2 class="doclib-results-title">Ditemukan {{ $documents->count() }} hasil</h2>
                 </div>
                 <div class="doclib-sort">
-                    @if(auth()->user()->isAdmin())
+                    @if(auth()->user()->canModify())
                         <a href="{{ route('documents.create') }}" class="doclib-btn-create">
                             <i class="bi bi-plus-circle"></i> Add Document
                         </a>
@@ -128,7 +128,7 @@
                                     @endif
                                     {{ $document->title }}
                                 </a>
-                                @if(auth()->user()->isAdmin())
+                                @if(auth()->user()->canModify())
                                     <div class="doclib-card-actions">
                                         <a href="{{ route('documents.edit', $document) }}" 
                                            class="doclib-btn-action doclib-btn-edit" 

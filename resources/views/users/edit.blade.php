@@ -62,11 +62,14 @@
                                     required
                                     {{ $user->id === auth()->id() ? 'disabled' : '' }}>
                                 <option value="">Select Role</option>
-                                <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>
-                                    Admin - Full Access
+                                <option value="super_admin" {{ old('role', $user->role) == 'super_admin' ? 'selected' : '' }}>
+                                    Super Admin - Full System Access
                                 </option>
-                                <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>
-                                    User - Regular Access
+                                <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>
+                                    Admin - Full Access (Except User Management)
+                                </option>
+                                <option value="viewer" {{ old('role', $user->role) == 'viewer' ? 'selected' : '' }}>
+                                    Viewer - View Only Access
                                 </option>
                             </select>
                             @if($user->id === auth()->id())
@@ -76,18 +79,11 @@
                                 </small>
                             @else
                                 <small class="form-text text-muted">
-                                    <strong>Admin:</strong> Full system access, can manage users.<br>
-                                    <strong>User:</strong> Only View for All Feature.
+                                    <strong>Super Admin:</strong> Full system access including user management.<br>
+                                    <strong>Admin:</strong> Full access except user management.<br>
+                                    <strong>Viewer:</strong> View only access to all features.
                                 </small>
                             @endif
-                            @error('role')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <hr>
-
-                        <div class="alert alert-info">
                             <i class="bi bi-info-circle"></i> 
                             <strong>Change Password:</strong> Leave password fields empty to keep current password.
                         </div>
