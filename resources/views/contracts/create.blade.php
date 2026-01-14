@@ -27,7 +27,7 @@
                         
                         <div class="mb-3">
                             <label for="employee_id" class="form-label">Select Employee <span class="text-danger">*</span></label>
-                            <select class="form-select @error('employee_id') is-invalid @enderror" 
+                            <select class="form-select select2-employee @error('employee_id') is-invalid @enderror" 
                                     id="employee_id" 
                                     name="employee_id" 
                                     required>
@@ -207,8 +207,44 @@
     </div>
 </div>
 
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2 for employee dropdown
+    $('.select2-employee').select2({
+        theme: 'bootstrap-5',
+        placeholder: '-- Search Employee by Name or NIK --',
+        allowClear: true,
+        width: '100%',
+        matcher: function(params, data) {
+            // If there are no search terms, return all data
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+
+            // Do not display the item if there is no 'text' property
+            if (typeof data.text === 'undefined') {
+                return null;
+            }
+
+            // Search in both name and NIK
+            var searchText = params.term.toLowerCase();
+            var optionText = data.text.toLowerCase();
+            
+            if (optionText.indexOf(searchText) > -1) {
+                return data;
+            }
+
+            return null;
+        }
+    });
+
     const contractType = document.getElementById('contract_type');
     const endDateField = document.getElementById('end_date_field');
     const endDateInput = document.getElementById('end_date');
