@@ -23,36 +23,36 @@
                         @csrf
                         @method('PUT')
 
-                        <h5 class="mb-3"><i class="bi bi-person"></i> Personal Information</h5>
-
+                        <!-- Employee Selection -->
+                        <h5 class="mb-3"><i class="bi bi-person"></i> Employee Selection</h5>
+                        
                         <div class="mb-3">
-                            <label for="employee_name" class="form-label">Employee Name <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control @error('employee_name') is-invalid @enderror" 
-                                   id="employee_name" 
-                                   name="employee_name" 
-                                   value="{{ old('employee_name', $contract->employee_name) }}" 
-                                   placeholder="Enter employee name"
-                                   required>
-                            @error('employee_name')
+                            <label for="employee_id" class="form-label">Select Employee <span class="text-danger">*</span></label>
+                            <select class="form-select @error('employee_id') is-invalid @enderror" 
+                                    id="employee_id" 
+                                    name="employee_id" 
+                                    required>
+                                <option value="">-- Select Employee --</option>
+                                @foreach($employees as $employee)
+                                    <option value="{{ $employee->id }}" 
+                                            data-nik="{{ $employee->nik }}"
+                                            {{ old('employee_id', $contract->employee_id) == $employee->id ? 'selected' : '' }}>
+                                        {{ $employee->employee_name }} (NIK: {{ $employee->nik }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('employee_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <small class="form-text text-muted">
+                                <i class="bi bi-info-circle"></i> Change the employee associated with this contract
+                            </small>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="nik" class="form-label">NIK (National ID) <span class="text-danger">*</span></label>
-                            <input type="text" 
-                                   class="form-control @error('nik') is-invalid @enderror" 
-                                   id="nik" 
-                                   name="nik" 
-                                   value="{{ old('nik', $contract->nik) }}" 
-                                   placeholder="Enter 16 digit NIK"
-                                   maxlength="16"
-                                   required>
-                            @error('nik')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <hr class="my-4">
+
+                        <!-- Employment Information -->
+                        <h5 class="mb-3"><i class="bi bi-briefcase"></i> Employment Information</h5>
 
                         <div class="mb-3">
                             <label for="TMT_awal" class="form-label">TMT Awal (Effective Start Date) <span class="text-danger">*</span></label>
@@ -66,71 +66,6 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="birthdate" class="form-label">Birth Date <span class="text-danger">*</span></label>
-                                <input type="date" 
-                                       class="form-control @error('birthdate') is-invalid @enderror" 
-                                       id="birthdate" 
-                                       name="birthdate" 
-                                       value="{{ old('birthdate', $contract->birthdate->format('Y-m-d')) }}" 
-                                       required>
-                                @error('birthdate')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="birthplace" class="form-label">Birth Place <span class="text-danger">*</span></label>
-                                <input type="text" 
-                                       class="form-control @error('birthplace') is-invalid @enderror" 
-                                       id="birthplace" 
-                                       name="birthplace" 
-                                       value="{{ old('birthplace', $contract->birthplace) }}" 
-                                       placeholder="e.g., Jakarta"
-                                       required>
-                                @error('birthplace')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
-                            <textarea class="form-control @error('address') is-invalid @enderror" 
-                                      id="address" 
-                                      name="address" 
-                                      rows="3" 
-                                      placeholder="Enter full address"
-                                      required>{{ old('address', $contract->address) }}</textarea>
-                            @error('address')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="file_cv" class="form-label">CV File (PDF)</label>
-                            @if($contract->file_cv)
-                                <div class="mb-2">
-                                    <a href="{{ asset('storage/' . $contract->file_cv) }}" target="_blank" class="btn btn-sm btn-info">
-                                        <i class="bi bi-file-pdf"></i> View Current CV
-                                    </a>
-                                </div>
-                            @endif
-                            <input type="file" 
-                                   class="form-control @error('file_cv') is-invalid @enderror" 
-                                   id="file_cv" 
-                                   name="file_cv" 
-                                   accept=".pdf">
-                            <small class="form-text text-muted">Upload new CV PDF file (max 5MB) - Leave empty to keep current file</small>
-                            @error('file_cv')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <hr class="my-4">
-                        <h5 class="mb-3"><i class="bi bi-briefcase"></i> Employment Information</h5>
                         
                         <div class="mb-3">
                             <label for="nomor_kontrak" class="form-label">Contract Number <span class="text-danger">*</span></label>

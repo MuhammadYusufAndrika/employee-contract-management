@@ -38,7 +38,7 @@
                         </tr>
                         <tr>
                             <th class="empd-info-label">Birth Date:</th>
-                            <td class="empd-info-value">{{ $employee->birthdate->format('d M Y') }}</td>
+                            <td class="empd-info-value">{{ $employee->birthdate ? $employee->birthdate->format('d M Y') : 'N/A' }}</td>
                         </tr>
                         <tr>
                             <th class="empd-info-label">Birth Place:</th>
@@ -49,28 +49,12 @@
                 <div class="col-md-6">
                     <table class="table table-borderless empd-info-table">
                         <tr>
-                            <th width="40%" class="empd-info-label">Job Position:</th>
-                            <td class="empd-info-value">{{ $employee->job_position }}</td>
-                        </tr>
-                        <tr>
-                            <th class="empd-info-label">Point of Hire:</th>
-                            <td class="empd-info-value">{{ $employee->point_of_hire }}</td>
-                        </tr>
-                        <tr>
-                            <th class="empd-info-label">TMT Awal:</th>
-                            <td class="empd-info-value">{{ $employee->TMT_awal ? $employee->TMT_awal->format('d M Y') : '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th class="empd-info-label">Department:</th>
-                            <td class="empd-info-value">{{ $employee->department }}</td>
-                        </tr>
-                        <tr>
-                            <th class="empd-info-label">Work Location:</th>
-                            <td class="empd-info-value">{{ $employee->work_location }}</td>
-                        </tr>
-                        <tr>
-                            <th class="empd-info-label">Address:</th>
+                            <th width="40%" class="empd-info-label">Address:</th>
                             <td class="empd-info-value">{{ $employee->address }}</td>
+                        </tr>
+                        <tr>
+                            <th class="empd-info-label">Total Contracts:</th>
+                            <td class="empd-info-value"><strong>{{ $contracts->count() }}</strong></td>
                         </tr>
                     </table>
                 </div>
@@ -91,40 +75,58 @@
     </div>
 
     <!-- Current Contract Status -->
+    @if($contracts->isNotEmpty())
+    @php
+        $latestContract = $contracts->first();
+    @endphp
     <div class="card empd-contract-card shadow mb-4">
         <div class="card-header empd-card-header-contract">
-            <h5 class="mb-0 empd-card-title"><i class="bi bi-calendar-check"></i> Current Contract Status</h5>
+            <h5 class="mb-0 empd-card-title"><i class="bi bi-calendar-check"></i> Latest Contract Status</h5>
         </div>
         <div class="card-body empd-card-body">
             <div class="row">
                 <div class="col-md-3">
                     <div class="empd-contract-item">
                         <strong class="empd-contract-label">Contract Number:</strong><br>
-                        <span class="empd-contract-number">{{ $employee->nomor_kontrak }}</span>
+                        <span class="empd-contract-number">{{ $latestContract->nomor_kontrak }}</span>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <div class="empd-contract-item">
+                        <strong class="empd-contract-label">Job Position:</strong><br>
+                        <span class="empd-contract-date">{{ $latestContract->job_position }}</span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="empd-contract-item">
+                        <strong class="empd-contract-label">Department:</strong><br>
+                        <span class="empd-contract-date">{{ $latestContract->department }}</span>
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <div class="empd-contract-item">
                         <strong class="empd-contract-label">Start Date:</strong><br>
-                        <span class="empd-contract-date">{{ $employee->start_date->format('d M Y') }}</span>
+                        <span class="empd-contract-date">{{ $latestContract->start_date ? $latestContract->start_date->format('d M Y') : 'N/A' }}</span>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="empd-contract-item">
                         <strong class="empd-contract-label">End Date:</strong><br>
-                        <span class="empd-contract-date">{{ $employee->end_date ? $employee->end_date->format('d M Y') : 'Permanent (KPP)' }}</span>
+                        <span class="empd-contract-date">{{ $latestContract->end_date ? $latestContract->end_date->format('d M Y') : 'Permanent (KPP)' }}</span>
                     </div>
                 </div>
-                <div class="col-md-3">
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-12">
                     <div class="empd-contract-item">
                         <strong class="empd-contract-label">Status:</strong><br>
-                        @if(!$employee->end_date)
+                        @if(!$latestContract->end_date)
                             <span class="empd-status-badge empd-status-permanent">Permanent</span>
-                        @elseif($employee->end_date < now())
+                        @elseif($latestContract->end_date < now())
                             <span class="empd-status-badge empd-status-expired">Expired</span>
-                        @elseif($employee->isExpiringSoon())
+                        @elseif($latestContract->isExpiringSoon())
                             <span class="empd-status-badge empd-status-expiring">
-                                Expiring in {{ $employee->daysUntilExpiration() }} days
+                                Expiring in {{ $latestContract->daysUntilExpiration() }} days
                             </span>
                         @else
                             <span class="empd-status-badge empd-status-active">Active</span>
@@ -132,12 +134,12 @@
                     </div>
                 </div>
             </div>
-            @if($employee->file_contract)
+            @if($latestContract->file_contract)
                 <div class="row mt-3">
                     <div class="col-md-12">
                         <div class="empd-file-section">
                             <strong class="empd-file-label">Contract PDF:</strong><br>
-                            <a href="{{ asset('storage/' . $employee->file_contract) }}" target="_blank" class="btn empd-btn-file mt-2">
+                            <a href="{{ asset('storage/' . $latestContract->file_contract) }}" target="_blank" class="btn empd-btn-file mt-2">
                                 <i class="bi bi-file-pdf"></i> View Current Contract PDF
                             </a>
                         </div>
@@ -146,66 +148,71 @@
             @endif
         </div>
     </div>
+    @else
+    <div class="card empd-contract-card shadow mb-4">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+            <p class="mt-3 text-muted">No contracts found for this employee.</p>
+            @if(auth()->user()->isAdmin())
+                <a href="{{ route('contracts.create') }}" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-circle"></i> Add Contract
+                </a>
+            @endif
+        </div>
+    </div>
+    @endif
 
-    <!-- History Timeline -->
+    <!-- Contract History Timeline -->
     <div class="card empd-history-card shadow">
         <div class="card-header empd-card-header-history">
             <h5 class="mb-0 empd-card-title">
-                <i class="bi bi-clock-history"></i> Contract Change History 
-                <span class="empd-history-count">{{ $histories->count() }} Records</span>
+                <i class="bi bi-clock-history"></i> All Contracts 
+                <span class="empd-history-count">{{ $contracts->count() }} Total</span>
             </h5>
         </div>
         <div class="card-body empd-card-body">
-            @if($histories->count() > 0)
+            @if($contracts->count() > 0)
                 <div class="empd-timeline">
-                    @foreach($histories as $history)
+                    @foreach($contracts as $contract)
                         <div class="empd-timeline-item">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center mb-2 empd-timeline-header">
-                                        @if($history->action_type === 'created')
-                                            <span class="empd-action-badge empd-action-created">
-                                                <i class="bi bi-plus-circle"></i> Created
-                                            </span>
-                                        @elseif($history->action_type === 'renewed')
+                                        @if($contract->contract_type === 'KPP')
                                             <span class="empd-action-badge empd-action-renewed">
-                                                <i class="bi bi-arrow-clockwise"></i> Renewed
+                                                <i class="bi bi-infinity"></i> Permanent
                                             </span>
-                                        @elseif($history->action_type === 'updated')
-                                            <span class="empd-action-badge empd-action-updated">
-                                                <i class="bi bi-pencil"></i> Updated
+                                        @else
+                                            <span class="empd-action-badge empd-action-created">
+                                                <i class="bi bi-file-text"></i> Contract
                                             </span>
                                         @endif
                                         <small class="empd-timeline-date">
-                                            <i class="bi bi-clock"></i> {{ $history->created_at->format('d M Y, H:i') }}
-                                            <span class="empd-timeline-relative">({{ $history->created_at->diffForHumans() }})</span>
+                                            <i class="bi bi-calendar"></i> {{ $contract->start_date ? $contract->start_date->format('d M Y') : 'N/A' }}
+                                            @if($contract->end_date)
+                                                - {{ $contract->end_date->format('d M Y') }}
+                                            @endif
                                         </small>
                                     </div>
-
-                                    @if($history->notes)
-                                        <div class="empd-history-notes">
-                                            <i class="bi bi-info-circle"></i> <strong>Notes:</strong> {{ $history->notes }}
-                                        </div>
-                                    @endif
 
                                     <div class="row mt-3">
                                         <div class="col-md-6">
                                             <table class="table table-sm table-borderless empd-history-table">
                                                 <tr>
                                                     <th width="45%" class="empd-history-label">Contract Number:</th>
-                                                    <td class="empd-history-value">{{ $history->nomor_kontrak }}</td>
+                                                    <td class="empd-history-value">{{ $contract->nomor_kontrak }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="empd-history-label">Department:</th>
-                                                    <td class="empd-history-value">{{ $history->department }}</td>
+                                                    <td class="empd-history-value">{{ $contract->department }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="empd-history-label">Work Location:</th>
-                                                    <td class="empd-history-value">{{ $history->work_location }}</td>
+                                                    <td class="empd-history-value">{{ $contract->work_location }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="empd-history-label">Job Position:</th>
-                                                    <td class="empd-history-value">{{ $history->job_position }}</td>
+                                                    <td class="empd-history-value">{{ $contract->job_position }}</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -213,23 +220,27 @@
                                             <table class="table table-sm table-borderless empd-history-table">
                                                 <tr>
                                                     <th width="45%" class="empd-history-label">Start Date:</th>
-                                                    <td class="empd-history-value">{{ \Carbon\Carbon::parse($history->start_date)->format('d M Y') }}</td>
+                                                    <td class="empd-history-value">{{ $contract->start_date ? $contract->start_date->format('d M Y') : 'N/A' }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="empd-history-label">End Date:</th>
-                                                    <td class="empd-history-value">{{ \Carbon\Carbon::parse($history->end_date)->format('d M Y') }}</td>
+                                                    <td class="empd-history-value">{{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="empd-history-label">Duration:</th>
                                                     <td class="empd-history-value">
-                                                        {{ \Carbon\Carbon::parse($history->start_date)->diffInDays(\Carbon\Carbon::parse($history->end_date)) }} days
+                                                        @if($contract->end_date && $contract->start_date)
+                                                            {{ $contract->start_date->diffInDays($contract->end_date) }} days
+                                                        @else
+                                                            Permanent
+                                                        @endif
                                                     </td>
                                                 </tr>
-                                                @if($history->file_contract)
+                                                @if($contract->file_contract)
                                                     <tr>
                                                         <th class="empd-history-label">Contract PDF:</th>
                                                         <td class="empd-history-value">
-                                                            <a href="{{ asset('storage/' . $history->file_contract) }}" target="_blank" class="btn empd-btn-history-file">
+                                                            <a href="{{ asset('storage/' . $contract->file_contract) }}" target="_blank" class="btn empd-btn-history-file">
                                                                 <i class="bi bi-file-pdf"></i> View PDF
                                                             </a>
                                                         </td>

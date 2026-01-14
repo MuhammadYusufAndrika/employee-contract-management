@@ -46,7 +46,7 @@
                                 <tr class="{{ $contract->daysUntilExpiration() <= 7 ? 'table-danger' : 'table-warning' }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
-                                        <strong>{{ $contract->employee_name }}</strong>
+                                        <strong>{{ $contract->employee->employee_name ?? 'N/A' }}</strong>
                                         @if($contract->daysUntilExpiration() <= 7)
                                             <span class="badge bg-danger ms-2">Urgent</span>
                                         @endif

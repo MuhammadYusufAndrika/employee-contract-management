@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\Employee;
 use App\Http\Requests\StoreContractRequest;
 use App\Http\Requests\UpdateContractRequest;
 use Illuminate\Http\Request;
@@ -14,15 +15,16 @@ class ContractController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Contract::query();
+        $query = Contract::with('employee');
 
         // Search by employee name or NIK
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('employee_name', 'like', '%' . $search . '%')
-                    ->orWhere('nik', 'like', '%' . $search . '%')
-                    ->orWhere('nomor_kontrak', 'like', '%' . $search . '%');
+                $q->whereHas('employee', function ($employeeQuery) use ($search) {
+                    $employeeQuery->where('employee_name', 'like', '%' . $search . '%')
+                        ->orWhere('nik', 'like', '%' . $search . '%');
+                })->orWhere('nomor_kontrak', 'like', '%' . $search . '%');
             });
         }
 
@@ -73,7 +75,8 @@ class ContractController extends Controller
             abort(403, 'Only administrators can create contracts.');
         }
 
-        return view('contracts.create');
+        $employees = Employee::orderBy('employee_name')->get();
+        return view('contracts.create', compact('employees'));
     }
 
     /**
@@ -87,13 +90,6 @@ class ContractController extends Controller
 
         $data = $request->validated();
 
-        // Handle CV file upload
-        if ($request->hasFile('file_cv')) {
-            $file = $request->file('file_cv');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $data['file_cv'] = $file->storeAs('cvs', $filename, 'public');
-        }
-
         // Handle contract file upload
         if ($request->hasFile('file_contract')) {
             $file = $request->file('file_contract');
@@ -102,7 +98,6 @@ class ContractController extends Controller
         }
 
         $contract = Contract::create($data);
-
 
         return redirect()->route('contracts.index')
             ->with('success', 'Contract created successfully.');
@@ -113,6 +108,7 @@ class ContractController extends Controller
      */
     public function show(Contract $contract)
     {
+        $contract->load('employee');
         return view('contracts.show', compact('contract'));
     }
 
@@ -125,7 +121,8 @@ class ContractController extends Controller
             abort(403, 'Only administrators can edit contracts.');
         }
 
-        return view('contracts.edit', compact('contract'));
+        $employees = Employee::orderBy('employee_name')->get();
+        return view('contracts.edit', compact('contract', 'employees'));
     }
 
     /**
@@ -138,14 +135,6 @@ class ContractController extends Controller
         }
 
         $data = $request->validated();
-
-        // Handle CV file upload
-        if ($request->hasFile('file_cv')) {
-            // Don't delete old file - keep it for history records
-            $file = $request->file('file_cv');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $data['file_cv'] = $file->storeAs('cvs', $filename, 'public');
-        }
 
         // Handle contract file upload
         if ($request->hasFile('file_contract')) {

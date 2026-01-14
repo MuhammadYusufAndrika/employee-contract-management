@@ -6,9 +6,16 @@
 <div class="emp-container">
     <div class="row mb-4">
         <div class="col-md-12">
-            <h2 class="emp-page-title">
-                <i class="bi bi-people-fill"></i> Employee List
-            </h2>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="emp-page-title">
+                    <i class="bi bi-people-fill"></i> Employee List
+                </h2>
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('employees.create') }}" class="btn btn-primary">
+                        <i class="bi bi-person-plus-fill me-1"></i>Add New Employee
+                    </a>
+                @endif
+            </div>
         </div>
     </div>
 
@@ -76,27 +83,38 @@
                         </thead>
                         <tbody class="emp-table-body">
                             @foreach($employees as $index => $employee)
+                                @php
+                                    $latestContract = $employee->contracts->sortByDesc('start_date')->first();
+                                @endphp
                                 <tr class="emp-table-row">
                                     <td class="emp-td-no">{{ $index + 1 }}</td>
                                     <td class="emp-td-name">
                                         <strong>{{ $employee->employee_name }}</strong>
                                     </td>
                                     <td class="emp-td-nik">{{ $employee->nik }}</td>
-                                    <td class="emp-td-position">{{ $employee->job_position }}</td>
+                                    <td class="emp-td-position">{{ $latestContract->job_position ?? '-' }}</td>
                                     <td class="emp-td-department">
-                                        <span class="emp-badge emp-badge-department">{{ $employee->department }}</span>
+                                        @if($latestContract && $latestContract->department)
+                                            <span class="emp-badge emp-badge-department">{{ $latestContract->department }}</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
                                     </td>
-                                    <td class="emp-td-location">{{ $employee->work_location }}</td>
+                                    <td class="emp-td-location">{{ $latestContract->work_location ?? '-' }}</td>
                                     <td class="emp-td-status">
-                                        @if(!$employee->end_date)
+                                        @if(!$latestContract)
+                                            <span class="emp-badge emp-badge-expired">
+                                                <i class="bi bi-dash-circle"></i> No Contract
+                                            </span>
+                                        @elseif($latestContract->contract_type === 'KPP' || !$latestContract->end_date)
                                             <span class="emp-badge emp-badge-permanent">
                                                 <i class="bi bi-infinity"></i> Permanent
                                             </span>
-                                        @elseif($employee->end_date < now())
+                                        @elseif($latestContract->end_date < now())
                                             <span class="emp-badge emp-badge-expired">
                                                 <i class="bi bi-x-circle"></i> Expired
                                             </span>
-                                        @elseif($employee->isExpiringSoon())
+                                        @elseif($latestContract->end_date <= now()->addDays(30))
                                             <span class="emp-badge emp-badge-expiring">
                                                 <i class="bi bi-exclamation-triangle"></i> Expiring Soon
                                             </span>

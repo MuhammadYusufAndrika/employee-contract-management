@@ -102,16 +102,16 @@
                                 <tr class="{{ $contract->isExpiringSoon() ? 'table-warning' : '' }}">
                                     <td>{{ $loop->iteration + ($contracts->currentPage() - 1) * $contracts->perPage() }}</td>
                                     <td>
-                                        <strong>{{ $contract->employee_name }}</strong>
+                                        <strong>{{ $contract->employee->employee_name ?? 'N/A' }}</strong>
                                         @if($contract->isExpiringSoon())
                                             <span class="badge bg-warning text-dark ms-2">
                                                 <i class="bi bi-exclamation-triangle"></i> Expiring Soon
                                             </span>
                                         @endif
                                         <br>
-                                        <small class="text-muted">{{ $contract->birthplace }}, {{ $contract->birthdate->format('d M Y') }}</small>
+                                        <small class="text-muted">{{ $contract->employee->birthplace ?? 'N/A' }}, {{ $contract->employee->birthdate ? $contract->employee->birthdate->format('d M Y') : 'N/A' }}</small>
                                     </td>
-                                    <td><small>{{ $contract->nik }}</small></td>
+                                    <td><small>{{ $contract->employee->nik ?? 'N/A' }}</small></td>
                                     <td><small class="text-primary"><strong>{{ $contract->nomor_kontrak }}</strong></small></td>
                                     <td>{{ $contract->job_position }}</td>
                                     <td>{{ $contract->department }}</td>

@@ -9,16 +9,12 @@ use Carbon\Carbon;
 class Contract extends Model
 {
     use HasFactory;
+
     protected $fillable = [
-        'employee_name',
-        'nik',
+        'employee_id',
         'nomor_kontrak',
-        'birthdate',
-        'birthplace',
-        'address',
         'job_position',
         'point_of_hire',
-        'file_cv',
         'TMT_awal',
         'contract_type',
         'start_date',
@@ -29,11 +25,18 @@ class Contract extends Model
     ];
 
     protected $casts = [
-        'birthdate' => 'date',
         'TMT_awal' => 'date',
         'start_date' => 'date',
         'end_date' => 'date',
     ];
+
+    /**
+     * Get the employee that owns the contract
+     */
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 
     /**
      * Get contracts expiring within the specified number of days
@@ -43,7 +46,8 @@ class Contract extends Model
         $today = Carbon::today();
         $futureDate = Carbon::today()->addDays($days);
 
-        return static::whereBetween('end_date', [$today, $futureDate])
+        return static::with('employee')
+            ->whereBetween('end_date', [$today, $futureDate])
             ->orderBy('end_date', 'asc')
             ->get();
     }
@@ -89,12 +93,12 @@ class Contract extends Model
     public function createHistory(string $actionType, ?string $notes = null)
     {
         return $this->histories()->create([
-            'employee_name' => $this->employee_name,
-            'nik' => $this->nik,
+            'employee_name' => $this->employee->employee_name ?? 'N/A',
+            'nik' => $this->employee->nik ?? 'N/A',
             'nomor_kontrak' => $this->nomor_kontrak,
-            'birthdate' => $this->birthdate,
-            'birthplace' => $this->birthplace,
-            'address' => $this->address,
+            'birthdate' => $this->employee->birthdate ?? null,
+            'birthplace' => $this->employee->birthplace ?? 'N/A',
+            'address' => $this->employee->address ?? 'N/A',
             'job_position' => $this->job_position,
             'contract_type' => $this->contract_type,
             'start_date' => $this->start_date,

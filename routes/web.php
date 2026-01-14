@@ -31,8 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/contract-histories/{contract}', [ContractHistoryController::class, 'show'])->name('contract-histories.show');
 
     // Employee routes
-    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
-    Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+    Route::resource('employees', EmployeeController::class);
 
     // Document Library routes
     Route::get('/documents', [App\Http\Controllers\DocumentController::class, 'index'])->name('documents.index');

@@ -1,6 +1,6 @@
 @extends('layouts.bootstrap')
 
-@section('title', 'Contract History - ' . $contract->employee_name)
+@section('title', 'Contract History - ' . ($contract->employee->employee_name ?? 'N/A'))
 
 @section('content')
 <div class="container">
@@ -30,19 +30,19 @@
                     <table class="table table-borderless">
                         <tr>
                             <th width="40%">Name:</th>
-                            <td><strong>{{ $contract->employee_name }}</strong></td>
+                            <td><strong>{{ $contract->employee->employee_name ?? 'N/A' }}</strong></td>
                         </tr>
                         <tr>
                             <th>NIK:</th>
-                            <td>{{ $contract->nik }}</td>
+                            <td>{{ $contract->employee->nik ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <th>Birth Date:</th>
-                            <td>{{ $contract->birthdate->format('d M Y') }}</td>
+                            <td>{{ $contract->employee && $contract->employee->birthdate ? $contract->employee->birthdate->format('d M Y') : 'N/A' }}</td>
                         </tr>
                         <tr>
                             <th>Birth Place:</th>
-                            <td>{{ $contract->birthplace }}</td>
+                            <td>{{ $contract->employee->birthplace ?? 'N/A' }}</td>
                         </tr>
                     </table>
                 </div>
@@ -70,16 +70,16 @@
                         </tr>
                         <tr>
                             <th>Address:</th>
-                            <td>{{ $contract->address }}</td>
+                            <td>{{ $contract->employee->address ?? 'N/A' }}</td>
                         </tr>
                     </table>
                 </div>
             </div>
-            @if($contract->file_cv)
+            @if($contract->employee && $contract->employee->file_cv)
                 <div class="row mt-3">
                     <div class="col-md-12">
                         <strong>CV Karyawan:</strong><br>
-                        <a href="{{ asset('storage/' . $contract->file_cv) }}" target="_blank" class="btn btn-sm btn-info mt-2">
+                        <a href="{{ asset('storage/' . $contract->employee->file_cv) }}" target="_blank" class="btn btn-sm btn-info mt-2">
                             <i class="bi bi-file-pdf"></i> View CV PDF
                         </a>
                     </div>
@@ -205,12 +205,16 @@
                                                 </tr>
                                                 <tr>
                                                     <th>End Date:</th>
-                                                    <td>{{ \Carbon\Carbon::parse($history->end_date)->format('d M Y') }}</td>
+                                                    <td>{{ $history->end_date ? \Carbon\Carbon::parse($history->end_date)->format('d M Y') : 'Permanent (KPP)' }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Duration:</th>
                                                     <td>
-                                                        {{ \Carbon\Carbon::parse($history->start_date)->diffInDays(\Carbon\Carbon::parse($history->end_date)) }} days
+                                                        @if($history->end_date)
+                                                            {{ \Carbon\Carbon::parse($history->start_date)->diffInDays(\Carbon\Carbon::parse($history->end_date)) }} days
+                                                        @else
+                                                            Permanent
+                                                        @endif
                                                     </td>
                                                 </tr>
                                                 @if($history->file_contract)
