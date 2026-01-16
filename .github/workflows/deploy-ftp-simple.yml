@@ -1,4 +1,4 @@
-name: Deploy to cPanel (FTP - Simple)
+name: Deploy to cPanel (FTPS)
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
   web-deploy:
     name: Deploy to cPanel
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Get latest code
         uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Sync files to cPanel
+      - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.SERVER }}
@@ -32,7 +32,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           protocol: ftps
           port: 21
-          server-dir: /public_html/
+          server-dir: /
           exclude: |
             **/.git*
             **/.git*/**
