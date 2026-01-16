@@ -49,7 +49,7 @@
                             <td class="empd-info-value">{{ $employee->birthplace }}</td>
                         </tr>
                         <tr>
-                            <th class="empd-info-label">TMT Awal:</th>
+                            <th class="empd-info-label">TMT Masuk Dahana:</th>
                             <td class="empd-info-value">{{ $employee->TMT_awal ? $employee->TMT_awal->format('d M Y') : '-' }}</td>
                         </tr>
                         <tr>

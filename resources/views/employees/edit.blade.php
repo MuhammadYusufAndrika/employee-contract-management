@@ -142,7 +142,7 @@
                             <!-- TMT Awal -->
                             <div class="col-md-6">
                                 <label for="TMT_awal" class="form-label fw-semibold">
-                                    <i class="bi bi-calendar-check text-primary me-1"></i>TMT Awal (Effective Start Date)
+                                    <i class="bi bi-calendar-check text-primary me-1"></i>TMT Masuk Dahana (Join Date)
                                 </label>
                                 <input type="date" 
                                        class="form-control @error('TMT_awal') is-invalid @enderror" 

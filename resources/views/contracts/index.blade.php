@@ -91,7 +91,6 @@
                                 <th>Job Position</th>
                                 <th>Department</th>
                                 <th>Work Location</th>
-                                <th>TMT Awal</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Status</th>
