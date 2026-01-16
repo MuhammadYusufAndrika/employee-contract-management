@@ -1,4 +1,4 @@
-name: Deploy to cPanel (FTPS)
+name: Deploy to cPanel via FTP
 
 on:
   push:
@@ -8,40 +8,43 @@ on:
   workflow_dispatch:
 
 jobs:
-  web-deploy:
-    name: Deploy to cPanel
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get latest code
+      # 1. Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. Setup PHP
       - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.3
+          tools: composer
+          coverage: none
 
+      # 3. Install dependencies
       - name: Install Composer dependencies
         run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-
-      - name: Deploy via FTP
+      # 4. Deploy via FTP (Shared IP)
+      - name: Deploy to cPanel (FTP)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.dahana.my.id
-          username: ${{ secrets.USERNAME }}
+          server: ${{ secrets.SERVER }}          # ISI: shared IP cPanel (contoh: 103.xxx.xxx.xxx)
+          username: ${{ secrets.USERNAME }}      # dahanamy@stagging.sitedahana.my.id
           password: ${{ secrets.PASSWORD }}
           protocol: ftp
           port: 21
           server-dir: /public_html/stagging.sitedahana.my.id/dahanamy/
           exclude: |
             **/.git*
-            **/.git*/**
+            **/.github/**
             **/node_modules/**
+            **/tests/**
             .env
-            .github/
-            tests/
+            storage/logs/**
             storage/framework/cache/**
             storage/framework/sessions/**
             storage/framework/views/**
-            storage/logs/*.log
