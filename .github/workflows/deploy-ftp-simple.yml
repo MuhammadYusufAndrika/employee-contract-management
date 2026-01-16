@@ -28,12 +28,12 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ secrets.SERVER }}
+          server: ftp.dahana.my.id
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          protocol: ftps
+          protocol: ftp
           port: 21
-          server-dir: /
+          server-dir: /public_html/stagging.sitedahana.my.id/dahanamy/
           exclude: |
             **/.git*
             **/.git*/**
