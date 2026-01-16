@@ -26,7 +26,6 @@ class StoreContractRequest extends FormRequest
             'nomor_kontrak' => 'required|string|max:255|unique:contracts,nomor_kontrak',
             'job_position' => 'required|string|max:255',
             'point_of_hire' => 'required|string|max:255',
-            'TMT_awal' => 'required|date',
             'contract_type' => 'required|in:Kontrak,KPP',
             'start_date' => 'required|date',
             'end_date' => 'required_if:contract_type,Kontrak|nullable|date|after:start_date',

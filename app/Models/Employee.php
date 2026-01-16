@@ -15,6 +15,7 @@ class Employee extends Model
         'nid',
         'birthplace',
         'birthdate',
+        'TMT_awal',
         'address',
         'nomor_hp',
         'file_cv',
@@ -23,6 +24,7 @@ class Employee extends Model
 
     protected $casts = [
         'birthdate' => 'date',
+        'TMT_awal' => 'date',
     ];
 
     /**

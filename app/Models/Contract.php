@@ -15,7 +15,6 @@ class Contract extends Model
         'nomor_kontrak',
         'job_position',
         'point_of_hire',
-        'TMT_awal',
         'contract_type',
         'start_date',
         'end_date',
@@ -26,7 +25,6 @@ class Contract extends Model
     ];
 
     protected $casts = [
-        'TMT_awal' => 'date',
         'start_date' => 'date',
         'end_date' => 'date',
     ];

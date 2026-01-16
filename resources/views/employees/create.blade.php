@@ -118,6 +118,17 @@
                                        required>
                             </div>
 
+                            <!-- TMT Awal -->
+                            <div class="col-md-6">
+                                <label for="TMT_awal" class="form-label fw-semibold">
+                                    <i class="bi bi-calendar-check text-primary me-1"></i>TMT Awal (Effective Start Date)
+                                </label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       id="TMT_awal" 
+                                       name="TMT_awal">
+                            </div>
+
                             <!-- Phone Number -->
                             <div class="col-md-6">
                                 <label for="nomor_hp" class="form-label fw-semibold">

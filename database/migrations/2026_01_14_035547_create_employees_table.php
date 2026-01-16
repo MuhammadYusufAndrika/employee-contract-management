@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('birthplace');
             $table->string('nomor_hp', 20)->nullable();
             $table->date('birthdate');
+            $table->date('TMT_awal')->nullable();
             $table->text('address');
             $table->string('file_cv')->nullable();
             $table->enum('status', ['Active', 'Layoff'])->default('Active');

@@ -49,11 +49,14 @@ class DatabaseSeeder extends Seeder
 
         // Create 30 employees
         for ($i = 1; $i <= 30; $i++) {
+            $tmtDate = fake()->dateTimeBetween('-10 years', '-1 year');
+
             $employee = Employee::create([
                 'employee_name' => fake()->name(),
                 'nik' => 'NIK' . str_pad($i, 5, '0', STR_PAD_LEFT),
                 'birthplace' => fake()->city(),
                 'birthdate' => fake()->dateTimeBetween('-45 years', '-22 years'),
+                'TMT_awal' => $tmtDate,
                 'address' => fake()->address(),
                 'nomor_hp' => '08' . fake()->numerify('##########'),
             ]);
@@ -70,7 +73,6 @@ class DatabaseSeeder extends Seeder
                     'nomor_kontrak' => 'CTR/' . date('Y', strtotime($startDate)) . '/' . str_pad($employee->id * 10 + $j, 4, '0', STR_PAD_LEFT),
                     'job_position' => fake()->randomElement($jobPositions),
                     'point_of_hire' => fake()->randomElement(['Direct Hire', 'Internal Promotion', 'Transfer']),
-                    'TMT_awal' => $startDate,
                     'contract_type' => $contractType,
                     'start_date' => $startDate,
                     'end_date' => $contractType === 'KPP' ? null : (clone $startDate)->addYear(),
@@ -88,7 +90,6 @@ class DatabaseSeeder extends Seeder
                 'nomor_kontrak' => 'CTR/EXPIRING/' . str_pad($employee->id, 4, '0', STR_PAD_LEFT),
                 'job_position' => fake()->randomElement($jobPositions),
                 'point_of_hire' => 'Contract Renewal',
-                'TMT_awal' => now()->subMonths(11),
                 'contract_type' => 'Kontrak',
                 'start_date' => now()->subMonths(11),
                 'end_date' => now()->addDays(rand(1, 30)),
@@ -105,7 +106,6 @@ class DatabaseSeeder extends Seeder
                 'nomor_kontrak' => 'CTR/EXPIRED/' . str_pad($employee->id, 4, '0', STR_PAD_LEFT),
                 'job_position' => fake()->randomElement($jobPositions),
                 'point_of_hire' => 'Expired Contract',
-                'TMT_awal' => now()->subMonths(13),
                 'contract_type' => 'Kontrak',
                 'start_date' => now()->subMonths(13),
                 'end_date' => now()->subDays(rand(1, 30)),

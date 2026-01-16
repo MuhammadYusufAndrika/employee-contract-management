@@ -51,21 +51,8 @@
 
                         <hr class="my-4">
 
-                        <!-- Employment Information -->
-                        <h5 class="mb-3"><i class="bi bi-briefcase"></i> Employment Information</h5>
-
-                        <div class="mb-3">
-                            <label for="TMT_awal" class="form-label">TMT Awal (Effective Start Date) <span class="text-danger">*</span></label>
-                            <input type="date" 
-                                   class="form-control @error('TMT_awal') is-invalid @enderror" 
-                                   id="TMT_awal" 
-                                   name="TMT_awal" 
-                                   value="{{ old('TMT_awal', $contract->TMT_awal ? $contract->TMT_awal->format('Y-m-d') : '') }}" 
-                                   required>
-                            @error('TMT_awal')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <!-- Contract Information -->
+                        <h5 class="mb-3"><i class="bi bi-briefcase"></i> Contract Information</h5>
                         
                         <div class="mb-3">
                             <label for="nomor_kontrak" class="form-label">Contract Number <span class="text-danger">*</span></label>

@@ -139,6 +139,21 @@
                                 @enderror
                             </div>
 
+                            <!-- TMT Awal -->
+                            <div class="col-md-6">
+                                <label for="TMT_awal" class="form-label fw-semibold">
+                                    <i class="bi bi-calendar-check text-primary me-1"></i>TMT Awal (Effective Start Date)
+                                </label>
+                                <input type="date" 
+                                       class="form-control @error('TMT_awal') is-invalid @enderror" 
+                                       id="TMT_awal" 
+                                       name="TMT_awal" 
+                                       value="{{ old('TMT_awal', $employee->TMT_awal?->format('Y-m-d')) }}">
+                                @error('TMT_awal')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <!-- Phone Number -->
                             <div class="col-md-6">
                                 <label for="nomor_hp" class="form-label fw-semibold">

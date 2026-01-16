@@ -49,6 +49,10 @@
                             <td class="empd-info-value">{{ $employee->birthplace }}</td>
                         </tr>
                         <tr>
+                            <th class="empd-info-label">TMT Awal:</th>
+                            <td class="empd-info-value">{{ $employee->TMT_awal ? $employee->TMT_awal->format('d M Y') : '-' }}</td>
+                        </tr>
+                        <tr>
                             <th class="empd-info-label">Phone Number:</th>
                             <td class="empd-info-value">{{ $employee->nomor_hp ?? '-' }}</td>
                         </tr>
