@@ -45,11 +45,103 @@ class EmployeeController extends Controller
 
         $employees = $query->orderBy('employee_name', 'asc')->get();
 
+        // By default, show active employees (Active, Permanent, Expiring Soon) - exclude expired and layoff
+        $employees = $employees->filter(function ($employee) {
+            $latestContract = $employee->contracts->first();
+
+            if (!$latestContract) {
+                return false;
+            }
+
+            // Exclude Layoff
+            if ($latestContract->status === 'Layoff') {
+                return false;
+            }
+
+            // Include Permanent employees (they never expire)
+            if ($latestContract->status === 'Permanent') {
+                return true;
+            }
+
+            // Exclude expired contracts
+            if ($latestContract->end_date && $latestContract->end_date < now()) {
+                return false;
+            }
+
+            return true;
+        });
+
         // Get unique departments and work locations from contracts
         $departments = \App\Models\Contract::distinct()->pluck('department')->filter()->sort()->values();
         $workLocations = \App\Models\Contract::distinct()->pluck('work_location')->filter()->sort()->values();
 
         return view('employees.index', compact('employees', 'departments', 'workLocations'));
+    }
+
+    /**
+     * Display employees with expired contracts.
+     */
+    public function expired(Request $request)
+    {
+        $query = Employee::with(['contracts' => function ($q) {
+            $q->orderBy('start_date', 'desc');
+        }]);
+
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('employee_name', 'like', "%{$search}%")
+                    ->orWhere('nik', 'like', "%{$search}%")
+                    ->orWhereHas('contracts', function ($q) use ($search) {
+                        $q->where('nomor_kontrak', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Department filter
+        if ($request->filled('department')) {
+            $query->whereHas('contracts', function ($q) use ($request) {
+                $q->where('department', $request->department);
+            });
+        }
+
+        // Work location filter
+        if ($request->filled('work_location')) {
+            $query->whereHas('contracts', function ($q) use ($request) {
+                $q->where('work_location', $request->work_location);
+            });
+        }
+
+        $employees = $query->orderBy('employee_name', 'asc')->get();
+
+        // Filter to show only employees with expired contracts (not laid off)
+        $employees = $employees->filter(function ($employee) {
+            $latestContract = $employee->contracts->first();
+
+            if (!$latestContract) {
+                return false;
+            }
+
+            // Exclude Layoff status
+            if ($latestContract->status === 'Layoff') {
+                return false;
+            }
+
+            // Exclude Permanent employees (they never expire)
+            if ($latestContract->status === 'Permanent') {
+                return false;
+            }
+
+            // Show only expired contracts (end_date must exist and be in the past)
+            return $latestContract->end_date && $latestContract->end_date < now();
+        });
+
+        // Get unique departments and work locations from contracts
+        $departments = \App\Models\Contract::distinct()->pluck('department')->filter()->sort()->values();
+        $workLocations = \App\Models\Contract::distinct()->pluck('work_location')->filter()->sort()->values();
+
+        return view('employees.expired', compact('employees', 'departments', 'workLocations'));
     }
 
     /**

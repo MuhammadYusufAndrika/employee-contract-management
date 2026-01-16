@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // Employee routes
     Route::resource('employees', EmployeeController::class);
+    Route::get('/employees-expired', [EmployeeController::class, 'expired'])->name('employees.expired');
     Route::get('/employees/{employee}/created', [EmployeeController::class, 'created'])->name('employees.created');
 
     // Layoff routes

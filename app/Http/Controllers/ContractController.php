@@ -188,6 +188,9 @@ class ContractController extends Controller
         // Get period filter (default to 1 month)
         $period = $request->get('period', '1');
 
+        // Get status filter (expiring or expired)
+        $statusFilter = $request->get('status_filter', 'expiring');
+
         // Calculate days based on period
         $days = match ($period) {
             '1' => 30,      // 1 month
@@ -200,18 +203,27 @@ class ContractController extends Controller
 
         $query = Contract::with('employee')
             ->whereNotNull('end_date')
-            ->where('end_date', '>', now());
+            ->where('status', '!=', 'Layoff'); // Exclude laid-off employees
 
-        // Apply period filter
-        if ($period === '12+') {
-            $query->where('end_date', '>', now()->addYear());
+        // Filter by status (expiring or expired)
+        if ($statusFilter === 'expired') {
+            // Show expired contracts
+            $query->where('end_date', '<', now());
         } else {
-            $query->where('end_date', '<=', now()->addDays($days));
+            // Show expiring contracts (default)
+            $query->where('end_date', '>', now());
+
+            // Apply period filter for expiring contracts
+            if ($period === '12+') {
+                $query->where('end_date', '>', now()->addYear());
+            } else {
+                $query->where('end_date', '<=', now()->addDays($days));
+            }
         }
 
-        $contracts = $query->orderBy('end_date', 'asc')->get();
+        $contracts = $query->orderBy('end_date', $statusFilter === 'expired' ? 'desc' : 'asc')->get();
 
-        return view('contracts.expiring', compact('contracts', 'period'));
+        return view('contracts.expiring', compact('contracts', 'period', 'statusFilter'));
     }
 
     /**
