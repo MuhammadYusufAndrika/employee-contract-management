@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           protocol: ftp
           port: 21
-          server-dir: /public_html/stagging.sitedahana.my.id/dahanamy/
+          server-dir: /public_html/stagging.sitedahana.my.id/  # Sesuaikan dengan direktori tujuan di server
           exclude: |
             **/.git*
             **/.github/**
