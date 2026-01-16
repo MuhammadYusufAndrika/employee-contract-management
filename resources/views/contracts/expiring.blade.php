@@ -8,8 +8,9 @@
         <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h2>
-                    <i class="bi bi-exclamation-triangle text-warning"></i> Contracts Expiring Soon
-                    <span class="badge bg-danger ms-2">{{ $contracts->count() }}</span>
+                    <i class="bi {{ $statusFilter == 'expired' ? 'bi-x-circle text-danger' : 'bi-exclamation-triangle text-warning' }}"></i> 
+                    {{ $statusFilter == 'expired' ? 'Expired Contracts' : 'Contracts Expiring Soon' }}
+                    <span class="badge {{ $statusFilter == 'expired' ? 'bg-danger' : 'bg-warning text-dark' }} ms-2">{{ $contracts->count() }}</span>
                 </h2>
                 <a href="{{ route('contracts.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Back to List
@@ -18,11 +19,28 @@
         </div>
     </div>
 
-    <!-- Period Filter -->
+    <!-- Filters -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form method="GET" action="{{ route('contracts.expiring') }}" class="row g-3 align-items-end">
-                <div class="col-md-8">
+                <!-- Status Filter -->
+                <div class="col-md-4">
+                    <label for="status_filter" class="form-label fw-semibold">
+                        <i class="bi bi-filter text-primary me-1"></i>Contract Status
+                    </label>
+                    <select class="form-select" id="status_filter" name="status_filter" onchange="this.form.submit()">
+                        <option value="expiring" {{ $statusFilter == 'expiring' ? 'selected' : '' }}>
+                            <i class="bi bi-exclamation-triangle"></i> Expiring Soon
+                        </option>
+                        <option value="expired" {{ $statusFilter == 'expired' ? 'selected' : '' }}>
+                            <i class="bi bi-x-circle"></i> Expired (Need Renewal)
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Period Filter (only show for expiring status) -->
+                @if($statusFilter == 'expiring')
+                <div class="col-md-6">
                     <label for="period" class="form-label fw-semibold">
                         <i class="bi bi-calendar-range text-primary me-1"></i>Filter by Expiration Period
                     </label>
@@ -34,9 +52,18 @@
                         <option value="12+" {{ $period == '12+' ? 'selected' : '' }}>More than 1 Year</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                @else
+                <div class="col-md-6">
+                    <div class="alert alert-danger mb-0">
+                        <i class="bi bi-info-circle"></i> 
+                        <strong>Showing all expired contracts</strong> - These employees need urgent contract renewal!
+                    </div>
+                </div>
+                @endif
+
+                <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-funnel"></i> Apply Filter
+                        <i class="bi bi-funnel"></i> Apply
                     </button>
                 </div>
             </form>
@@ -44,6 +71,7 @@
     </div>
 
     @if($contracts->count() > 0)
+        @if($statusFilter == 'expiring')
         <div class="alert alert-warning" role="alert">
             <i class="bi bi-info-circle"></i> 
             <strong>Attention!</strong> Found {{ $contracts->count() }} contract(s) 
@@ -60,12 +88,19 @@
             @endif
             Please take necessary action.
         </div>
+        @else
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> 
+            <strong>URGENT!</strong> Found {{ $contracts->count() }} expired contract(s). 
+            These employees cannot work until their contracts are renewed!
+        </div>
+        @endif
 
         <div class="card shadow">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead class="table-warning">
+                        <thead class="{{ $statusFilter == 'expired' ? 'table-danger' : 'table-warning' }}">
                             <tr>
                                 <th>#</th>
                                 <th>Employee Name</th>
@@ -75,7 +110,7 @@
                                 <th>Work Location</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th>Days Remaining</th>
+                                <th>{{ $statusFilter == 'expired' ? 'Days Overdue' : 'Days Remaining' }}</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -83,13 +118,19 @@
                             @foreach($contracts as $contract)
                                 @php
                                     $daysRemaining = $contract->daysUntilExpiration();
-                                    $urgency = $daysRemaining <= 7 ? 'danger' : ($daysRemaining <= 30 ? 'warning' : 'info');
+                                    $isExpired = $contract->end_date < now();
+                                    $daysOverdue = $isExpired ? abs($daysRemaining) : 0;
+                                    $urgency = $isExpired ? 'danger' : ($daysRemaining <= 7 ? 'danger' : ($daysRemaining <= 30 ? 'warning' : 'info'));
                                 @endphp
                                 <tr class="{{ $urgency === 'danger' ? 'table-danger' : ($urgency === 'warning' ? 'table-warning' : '') }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
                                         <strong>{{ $contract->employee->employee_name ?? 'N/A' }}</strong>
-                                        @if($daysRemaining <= 7)
+                                        @if($isExpired)
+                                            <span class="badge bg-danger ms-2">
+                                                <i class="bi bi-exclamation-triangle-fill"></i> EXPIRED
+                                            </span>
+                                        @elseif($daysRemaining <= 7)
                                             <span class="badge bg-danger ms-2">Urgent</span>
                                         @elseif($daysRemaining <= 30)
                                             <span class="badge bg-warning text-dark ms-2">Soon</span>
@@ -100,20 +141,38 @@
                                     <td>{{ $contract->point_of_hire }}</td>
                                     <td>{{ $contract->work_location }}</td>
                                     <td>{{ $contract->start_date->format('d M Y') }}</td>
-                                    <td>{{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</td>
                                     <td>
-                                        <span class="badge bg-{{ $urgency }} {{ $urgency === 'warning' ? 'text-dark' : '' }}">
-                                            <i class="bi bi-clock"></i> {{ $daysRemaining }} days
+                                        <span class="{{ $isExpired ? 'text-danger fw-bold' : '' }}">
+                                            {{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}
                                         </span>
                                     </td>
                                     <td>
-                                        @if(auth()->user()->isAdmin())
+                                        @if($isExpired)
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-clock-history"></i> {{ $daysOverdue }} {{ $daysOverdue == 1 ? 'day' : 'days' }} overdue
+                                            </span>
+                                        @else
+                                            <span class="badge bg-{{ $urgency }} {{ $urgency === 'warning' ? 'text-dark' : '' }}">
+                                                <i class="bi bi-clock"></i> {{ $daysRemaining }} {{ $daysRemaining == 1 ? 'day' : 'days' }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(auth()->user()->canModify())
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('contracts.renew', $contract) }}" 
-                                                   class="btn btn-sm btn-success" 
-                                                   title="Renew Contract">
-                                                    <i class="bi bi-arrow-clockwise"></i> Renew
-                                                </a>
+                                                @if($isExpired)
+                                                    <a href="{{ route('contracts.renew', $contract) }}" 
+                                                       class="btn btn-sm btn-danger" 
+                                                       title="Renew Expired Contract - URGENT!">
+                                                        <i class="bi bi-arrow-clockwise"></i> Renew Now
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('contracts.renew', $contract) }}" 
+                                                       class="btn btn-sm btn-success" 
+                                                       title="Renew Contract">
+                                                        <i class="bi bi-arrow-clockwise"></i> Renew
+                                                    </a>
+                                                @endif
                                                 <a href="{{ route('contracts.show', $contract) }}" 
                                                    class="btn btn-sm btn-primary" 
                                                    title="View Details">

@@ -222,7 +222,7 @@
                         </h6>
 
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label for="TMT_awal" class="form-label fw-semibold">
                                     <i class="bi bi-calendar-event text-primary me-1"></i>TMT Awal (Effective Start Date)
                                     <span class="text-danger">*</span>
@@ -232,7 +232,7 @@
                                        id="TMT_awal" 
                                        name="TMT_awal" 
                                        required>
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-6">
                                 <label for="contract_type" class="form-label fw-semibold">

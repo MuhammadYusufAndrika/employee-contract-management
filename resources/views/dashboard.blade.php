@@ -4,6 +4,74 @@
 
 @section('content')
     @php
+        // Employee statistics
+        $allEmployees = \App\Models\Employee::with(['contracts' => function ($q) {
+            $q->orderBy('start_date', 'desc');
+        }])->get();
+        
+        $totalEmployees = $allEmployees->filter(function ($employee) {
+            $latestContract = $employee->contracts->first();
+            return $latestContract && $latestContract->status !== 'Layoff';
+        })->count();
+        
+        $activeEmployees = $allEmployees->filter(function ($employee) {
+            $latestContract = $employee->contracts->first();
+            if (!$latestContract || $latestContract->status === 'Layoff') {
+                return false;
+            }
+            
+            // Include Permanent employees (contract_type === 'KPP' or no end_date)
+            if ($latestContract->contract_type === 'KPP' || !$latestContract->end_date) {
+                return true;
+            }
+            
+            // Exclude expired contracts
+            if ($latestContract->end_date < now()) {
+                return false;
+            }
+            
+            // Exclude expiring soon (within 30 days) - they have their own category
+            if ($latestContract->end_date <= now()->addDays(30)) {
+                return false;
+            }
+            
+            // Active = contract expires MORE than 30 days from now
+            return true;
+        })->count();
+        
+        $expiringEmployees = $allEmployees->filter(function ($employee) {
+            $latestContract = $employee->contracts->first();
+            if (!$latestContract || $latestContract->status === 'Layoff') {
+                return false;
+            }
+            // Exclude Permanent employees (contract_type === 'KPP' or no end_date)
+            if ($latestContract->contract_type === 'KPP' || !$latestContract->end_date) {
+                return false;
+            }
+            return $latestContract->end_date 
+                && $latestContract->end_date >= now() 
+                && $latestContract->end_date <= now()->addDays(30);
+        })->count();
+        
+        $expiredEmployees = $allEmployees->filter(function ($employee) {
+            $latestContract = $employee->contracts->first();
+            if (!$latestContract || $latestContract->status === 'Layoff') {
+                return false;
+            }
+            // Exclude Permanent employees (contract_type === 'KPP' or no end_date)
+            if ($latestContract->contract_type === 'KPP' || !$latestContract->end_date) {
+                return false;
+            }
+            // Show only expired contracts
+            return $latestContract->end_date && $latestContract->end_date < now();
+        })->count();
+        
+        $layoffEmployees = $allEmployees->filter(function ($employee) {
+            $latestContract = $employee->contracts->first();
+            return $latestContract && $latestContract->status === 'Layoff';
+        })->count();
+        
+        // Contract statistics
         $totalContracts = \App\Models\Contract::count();
         $activeContracts = \App\Models\Contract::where('end_date', '>=', now())->count();
         $expiredContracts = \App\Models\Contract::where('end_date', '<', now())->count();
@@ -11,66 +79,157 @@
         $recentContracts = \App\Models\Contract::orderBy('created_at', 'desc')->take(5)->get();
     @endphp
 
-    <!-- Statistics Cards -->
+    <!-- Employee Statistics Cards -->
     <div class="row mb-4">
-        <div class="col-md-3">
+        <div class="col-12 mb-3">
+            <h4><i class="bi bi-people-fill"></i> Employee Statistics</h4>
+        </div>
+        
+        <div class="col-md-3 col-lg col-6">
             <div class="card text-white bg-primary shadow">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="card-title text-white-50">Total Contracts</h6>
-                            <h2 class="mb-0">{{ $totalContracts }}</h2>
+                            <h6 class="card-title text-white-50 small">Total Employees</h6>
+                            <h2 class="mb-0">{{ $totalEmployees }}</h2>
                         </div>
                         <div>
-                            <i class="bi bi-file-text" style="font-size: 3rem; opacity: 0.5;"></i>
+                            <i class="bi bi-people" style="font-size: 2.5rem; opacity: 0.5;"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 col-lg col-6">
             <div class="card text-white bg-success shadow">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="card-title text-white-50">Active Contracts</h6>
-                            <h2 class="mb-0">{{ $activeContracts }}</h2>
+                            <h6 class="card-title text-white-50 small">Active Employees</h6>
+                            <h2 class="mb-0">{{ $activeEmployees }}</h2>
                         </div>
                         <div>
-                            <i class="bi bi-check-circle" style="font-size: 3rem; opacity: 0.5;"></i>
+                            <i class="bi bi-check-circle" style="font-size: 2.5rem; opacity: 0.5;"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 col-lg col-6">
             <div class="card text-white bg-warning shadow">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="card-title text-white-50">Expiring Soon</h6>
-                            <h2 class="mb-0">{{ $expiringContracts->count() }}</h2>
+                            <h6 class="card-title text-white-50 small">Expiring Soon</h6>
+                            <h2 class="mb-0">{{ $expiringEmployees }}</h2>
                         </div>
                         <div>
-                            <i class="bi bi-exclamation-triangle" style="font-size: 3rem; opacity: 0.5;"></i>
+                            <i class="bi bi-exclamation-triangle" style="font-size: 2.5rem; opacity: 0.5;"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 col-lg col-6">
             <div class="card text-white bg-danger shadow">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="card-title text-white-50">Expired</h6>
+                            <h6 class="card-title text-white-50 small">Expired</h6>
+                            <h2 class="mb-0">{{ $expiredEmployees }}</h2>
+                        </div>
+                        <div>
+                            <i class="bi bi-person-x" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-lg col-6">
+            <div class="card text-white bg-dark shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white-50 small">Layoffs</h6>
+                            <h2 class="mb-0">{{ $layoffEmployees }}</h2>
+                        </div>
+                        <div>
+                            <i class="bi bi-person-dash" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contract Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <h4><i class="bi bi-file-text"></i> Contract Statistics</h4>
+        </div>
+        
+        <div class="col-md-3 col-lg col-6">
+            <div class="card text-white bg-info shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white-50 small">Total Contracts</h6>
+                            <h2 class="mb-0">{{ $totalContracts }}</h2>
+                        </div>
+                        <div>
+                            <i class="bi bi-file-text" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-lg col-6">
+            <div class="card text-white bg-success shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white-50 small">Active Contracts</h6>
+                            <h2 class="mb-0">{{ $activeContracts }}</h2>
+                        </div>
+                        <div>
+                            <i class="bi bi-check-circle" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-lg col-6">
+            <div class="card text-white bg-warning shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white-50 small">Expiring Soon</h6>
+                            <h2 class="mb-0">{{ $expiringContracts->count() }}</h2>
+                        </div>
+                        <div>
+                            <i class="bi bi-exclamation-triangle" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-lg col-6">
+            <div class="card text-white bg-danger shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white-50 small">Expired</h6>
                             <h2 class="mb-0">{{ $expiredContracts }}</h2>
                         </div>
                         <div>
-                            <i class="bi bi-x-circle" style="font-size: 3rem; opacity: 0.5;"></i>
+                            <i class="bi bi-x-circle" style="font-size: 2.5rem; opacity: 0.5;"></i>
                         </div>
                     </div>
                 </div>
