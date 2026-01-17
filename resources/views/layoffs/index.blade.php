@@ -141,13 +141,25 @@
                                                 <form action="{{ route('layoffs.destroy', $layoff) }}" 
                                                       method="POST" 
                                                       class="d-inline"
-                                                      onsubmit="return confirm('Are you sure you want to delete this layoff record?');">
+                                                      onsubmit="return confirm('Are you sure you want to restore {{ $layoff->employee->employee_name }} back to the employee list?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" 
+                                                            class="btn btn-sm btn-success"
+                                                            title="Restore to Employee List">
+                                                        <i class="bi bi-arrow-counterclockwise"></i>
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('layoffs.permanent-delete', $layoff) }}" 
+                                                      method="POST" 
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('WARNING: This will PERMANENTLY delete {{ $layoff->employee->employee_name }} and ALL associated data (contracts, history, etc.). This action CANNOT be undone! Are you absolutely sure?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 
                                                             class="btn btn-sm btn-danger"
-                                                            title="Delete">
-                                                        <i class="bi bi-trash"></i>
+                                                            title="Delete Permanently">
+                                                        <i class="bi bi-trash-fill"></i>
                                                     </button>
                                                 </form>
                                             @endif

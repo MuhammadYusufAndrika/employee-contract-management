@@ -158,13 +158,15 @@ class LayoffController extends Controller
     }
 
     /**
-     * Remove the specified layoff from storage.
+     * Remove the specified layoff from storage (restore employee).
      */
     public function destroy(Layoff $layoff)
     {
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Only administrators can delete layoffs.');
         }
+
+        $employeeName = $layoff->employee->employee_name;
 
         // Delete file if exists
         if ($layoff->layoff_letter) {
@@ -180,6 +182,42 @@ class LayoffController extends Controller
         $layoff->delete();
 
         return redirect()->route('layoffs.index')
-            ->with('success', 'Layoff record deleted successfully.');
+            ->with('success', 'Layoff record deleted. Employee ' . $employeeName . ' has been restored to the employee list.');
+    }
+
+    /**
+     * Permanently delete the employee and all associated data.
+     */
+    public function permanentDelete(Layoff $layoff)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Only administrators can permanently delete employees.');
+        }
+
+        $employeeName = $layoff->employee->employee_name;
+        $employee = $layoff->employee;
+
+        // Delete layoff letter file if exists
+        if ($layoff->layoff_letter) {
+            Storage::disk('public')->delete($layoff->layoff_letter);
+        }
+
+        // Delete employee's CV file if exists
+        if ($employee->file_cv) {
+            Storage::disk('public')->delete($employee->file_cv);
+        }
+
+        // Delete all contract files associated with this employee
+        foreach ($employee->contracts as $contract) {
+            if ($contract->file_contract) {
+                Storage::disk('public')->delete($contract->file_contract);
+            }
+        }
+
+        // Delete the employee (cascade will delete contracts, layoff, etc.)
+        $employee->delete();
+
+        return redirect()->route('layoffs.index')
+            ->with('success', 'Employee ' . $employeeName . ' and all associated data have been permanently deleted.');
     }
 }
