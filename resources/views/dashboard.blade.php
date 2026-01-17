@@ -76,7 +76,41 @@
         $activeContracts = \App\Models\Contract::where('end_date', '>=', now())->count();
         $expiredContracts = \App\Models\Contract::where('end_date', '<', now())->count();
         $expiringContracts = \App\Models\Contract::expiringWithinDays(30);
-        $recentContracts = \App\Models\Contract::orderBy('created_at', 'desc')->take(5)->get();
+        $recentContracts = \App\Models\Contract::with('employee')->orderBy('created_at', 'desc')->take(5)->get();
+        
+        // Analytics data
+        $expiringIn7Days = \App\Models\Contract::expiringWithinDays(7);
+        
+        // Department breakdown for expired contracts
+        $allContracts = \App\Models\Contract::all();
+        $departmentExpired = $allContracts->filter(function($contract) {
+            return $contract->end_date && $contract->end_date < now();
+        })->groupBy('department')->map(function($group) {
+            return $group->count();
+        })->sortDesc();
+        $topExpiredDept = $departmentExpired->keys()->first() ?? 'N/A';
+        $topExpiredDeptCount = $departmentExpired->first() ?? 0;
+        
+        // Contracts by department (for bar chart)
+        $contractsByDept = $allContracts->groupBy('department')->map(function($group) {
+            return $group->count();
+        })->sortDesc()->take(6);
+        
+        // // Monthly trend (compare this month vs last month active contracts)
+        // $thisMonthActive = \App\Models\Contract::where('start_date', '<=', now())
+        //     ->where(function($q) {
+        //         $q->where('end_date', '>=', now()->startOfMonth())
+        //           ->orWhereNull('end_date');
+        //     })->count();
+        
+        // $lastMonthActive = \App\Models\Contract::where('start_date', '<=', now()->subMonth())
+        //     ->where(function($q) {
+        //         $q->where('end_date', '>=', now()->subMonth()->startOfMonth())
+        //           ->orWhereNull('end_date');
+        //     })->count();
+        
+        // $monthlyTrend = $thisMonthActive - $lastMonthActive;
+        // $monthlyTrendPercent = $lastMonthActive > 0 ? round(($monthlyTrend / $lastMonthActive) * 100, 1) : 0;
     @endphp
 
     <!-- Employee Statistics Cards -->
@@ -167,7 +201,7 @@
     </div>
 
     <!-- Contract Statistics Cards -->
-    <div class="row mb-4">
+    {{-- <div class="row mb-4">
         <div class="col-12 mb-3">
             <h4><i class="bi bi-file-text"></i> Contract Statistics</h4>
         </div>
@@ -236,6 +270,82 @@
                 </div>
             </div>
         </div>
+    </div> --}}
+
+    <!-- Analytics Section -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <h4><i class="bi bi-graph-up"></i> Analytics</h4>
+        </div>
+        
+        <!-- Donut Chart - Contract Status Distribution -->
+        <div class="col-lg-6 col-md-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-pie-chart"></i> Contract Status Distribution</h6>
+                </div>
+                <div class="card-body" style="height: 300px;">
+                    <canvas id="statusDonutChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bar Chart - Contracts by Department -->
+        <div class="col-lg-6 col-md-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-bar-chart"></i> Contracts by Department</h6>
+                </div>
+                <div class="card-body" style="height: 300px;">
+                    <canvas id="deptBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Insight Summary Card -->
+        {{-- <div class="col-md-4 mb-4">
+            <div class="card shadow border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Insight Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">Expiring in 7 Days</small>
+                                <h4 class="mb-0 text-danger">{{ $expiringIn7Days->count() }}</h4>
+                            </div>
+                            <div>
+                                <i class="bi bi-calendar-x text-danger" style="font-size: 2rem; opacity: 0.3;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 pb-3 border-bottom">
+                        <small class="text-muted">Dept with Most Expired</small>
+                        <h5 class="mb-0">{{ $topExpiredDept }}</h5>
+                        <small class="text-danger"><i class="bi bi-exclamation-circle"></i> {{ $topExpiredDeptCount }} expired contracts</small>
+                    </div>
+                    
+                    <div>
+                        <small class="text-muted">Monthly Trend</small>
+                        <h5 class="mb-0">
+                            @if($monthlyTrend > 0)
+                                <i class="bi bi-arrow-up-circle text-success"></i>
+                                <span class="text-success">+{{ $monthlyTrend }}</span>
+                            @elseif($monthlyTrend < 0)
+                                <i class="bi bi-arrow-down-circle text-danger"></i>
+                                <span class="text-danger">{{ $monthlyTrend }}</span>
+                            @else
+                                <i class="bi bi-dash-circle text-secondary"></i>
+                                <span class="text-secondary">0</span>
+                            @endif
+                        </h5>
+                        <small class="text-muted">{{ $monthlyTrendPercent > 0 ? '+' : '' }}{{ $monthlyTrendPercent }}% vs last month</small>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
     </div>
 
     <div class="row">
@@ -253,15 +363,16 @@
                             @foreach($expiringContracts->take(5) as $contract)
                                 <a href="{{ route('contracts.edit', $contract) }}" class="list-group-item list-group-item-action {{ $contract->daysUntilExpiration() <= 7 ? 'list-group-item-danger' : 'list-group-item-warning' }}">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{ $contract->employee_name }}</h6>
+                                        <h6 class="mb-1">{{ $contract->employee->employee_name ?? 'N/A' }}</h6>
                                         <small>
                                             <span class="badge {{ $contract->daysUntilExpiration() <= 7 ? 'bg-danger' : 'bg-warning text-dark' }}">
                                                 {{ $contract->daysUntilExpiration() }} days
                                             </span>
                                         </small>
                                     </div>
-                                    <p class="mb-1 small">{{ $contract->department }} - {{ $contract->work_location }}</p>
-                                    <small>Expires: {{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</small>
+                                    <h6 class="mb-1 small">{{ $contract->job_position }}</h6>
+                                    {{-- <p class="mb-1 small"></p> --}}
+                                    <small class="text-muted">{{ $contract->work_location }} • Expires: {{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</small>
                                 </a>
                             @endforeach
                         </div>
@@ -296,7 +407,7 @@
                             @foreach($recentContracts as $contract)
                                 <a href="{{ route('contracts.edit', $contract) }}" class="list-group-item list-group-item-action">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{ $contract->employee_name }}</h6>
+                                        <h6 class="mb-1">{{ $contract->employee->employee_name ?? 'N/A' }}</h6>
                                         <small>
                                             @if(!$contract->end_date)
                                                 <span class="badge bg-info">Permanent</span>
@@ -309,8 +420,8 @@
                                             @endif
                                         </small>
                                     </div>
-                                    <p class="mb-1 small">{{ $contract->department }} - {{ $contract->work_location }}</p>
-                                    <small class="text-muted">{{ $contract->start_date->format('d M Y') }} - {{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</small>
+                                    <p class="mb-1 small">{{ $contract->job_position }}</p>
+                                    <small class="text-muted">{{ $contract->work_location }} • {{ $contract->start_date->format('d M Y') }} - {{ $contract->end_date ? $contract->end_date->format('d M Y') : 'Permanent' }}</small>
                                 </a>
                             @endforeach
                         </div>
@@ -366,3 +477,132 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Plugin to display text in center of donut chart
+        const centerTextPlugin = {
+            id: 'centerText',
+            afterDatasetsDraw(chart) {
+                const { ctx, chartArea: { left, top, width, height } } = chart;
+                const centerX = left + width / 2;
+                const centerY = top + height / 2;
+                
+                ctx.save();
+                const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                
+                // Draw total number
+                ctx.font = 'bold 32px Arial';
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(total, centerX, centerY - 10);
+                
+                // Draw label
+                ctx.font = '14px Arial';
+                ctx.fillStyle = '#666';
+                ctx.fillText('Total Contracts', centerX, centerY + 20);
+                ctx.restore();
+            }
+        };
+        
+        // Donut Chart - Contract Status Distribution
+        const statusCtx = document.getElementById('statusDonutChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Active', 'Expiring Soon', 'Expired'],
+                datasets: [{
+                    data: [{{ $activeContracts }}, {{ $expiringContracts->count() }}, {{ $expiredContracts }}],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgb(40, 167, 69)',
+                        'rgb(255, 193, 7)',
+                        'rgb(220, 53, 69)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map((label, i) => {
+                                        const value = data.datasets[0].data[i];
+                                        return {
+                                            text: label + ': ' + value,
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            strokeStyle: data.datasets[0].borderColor[i],
+                                            lineWidth: 2,
+                                            hidden: false,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            },
+            plugins: [centerTextPlugin]
+        });
+        
+        // Bar Chart - Contracts by Department
+        const deptCtx = document.getElementById('deptBarChart').getContext('2d');
+        new Chart(deptCtx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($contractsByDept->keys()->toArray()) !!},
+                datasets: [{
+                    label: 'Contracts',
+                    data: {!! json_encode($contractsByDept->values()->toArray()) !!},
+                    backgroundColor: 'rgba(13, 110, 253, 0.8)',
+                    borderColor: 'rgb(13, 110, 253)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
