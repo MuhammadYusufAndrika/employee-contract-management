@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
 
     // Layoff routes
     Route::resource('layoffs', App\Http\Controllers\LayoffController::class);
+    Route::delete('/layoffs/{layoff}/permanent', [App\Http\Controllers\LayoffController::class, 'permanentDelete'])->name('layoffs.permanent-delete');
 
     // Document Library routes
     Route::get('/documents', [App\Http\Controllers\DocumentController::class, 'index'])->name('documents.index');
