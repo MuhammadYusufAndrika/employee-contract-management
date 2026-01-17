@@ -98,7 +98,7 @@
                                     $latestContract = $employee->contracts->sortByDesc('start_date')->first();
                                 @endphp
                                 <tr class="emp-table-row">
-                                    <td class="emp-td-no">{{ $index + 1 }}</td>
+                                    <td class="emp-td-no">{{ $loop->iteration }}</td>
                                     <td class="emp-td-name">
                                         <strong>{{ $employee->employee_name }}</strong>
                                     </td>
