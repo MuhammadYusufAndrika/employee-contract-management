@@ -6,7 +6,7 @@
     <div class="sidebar-header">
         <h3>
             <i class="bi bi-file-earmark-text"></i>
-            <span>Contract Management</span>
+            <span>Employee Management</span>
         </h3>
     </div>
     
@@ -17,43 +17,11 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        <li class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle {{ request()->routeIs('employees.*') ? 'active' : '' }}" 
-               data-bs-toggle="collapse" 
-               data-bs-target="#employeesSubmenu" 
-               aria-expanded="{{ request()->routeIs('employees.*') ? 'true' : 'false' }}">
-                <i class="bi bi-people"></i>
+        <li class="nav-item">
+            <a href="{{ route('employees.index') }}" class="nav-link {{ request()->routeIs('employees.*') ? 'active' : '' }}">
+                <i class="bi bi-people-fill"></i>
                 <span>Employees</span>
             </a>
-            <ul class="collapse nav flex-column ms-3 {{ request()->routeIs('employees.*') ? 'show' : '' }}" id="employeesSubmenu">
-                <li class="nav-item">
-                    <a href="{{ route('employees.index') }}" class="nav-link submenu-link {{ request()->routeIs('employees.index') ? 'active' : '' }}">
-                        <i class="bi bi-check-circle"></i>
-                        <span>Active Employees</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('employees.expired') }}" class="nav-link submenu-link {{ request()->routeIs('employees.expired') ? 'active' : '' }}">
-                        <i class="bi bi-person-x"></i>
-                        <span>Expired Employees</span>
-                        @php
-                            $expiredEmployeeCount = \App\Models\Employee::with(['contracts' => function ($q) {
-                                $q->orderBy('start_date', 'desc');
-                            }])->get()->filter(function ($employee) {
-                                $latestContract = $employee->contracts->first();
-                                return $latestContract 
-                                    && $latestContract->status !== 'Layoff' 
-                                    && $latestContract->status !== 'Permanent'
-                                    && $latestContract->end_date 
-                                    && $latestContract->end_date < now();
-                            })->count();
-                        @endphp
-                        @if($expiredEmployeeCount > 0)
-                            <span class="badge bg-danger nav-badge">{{ $expiredEmployeeCount }}</span>
-                        @endif
-                    </a>
-                </li>
-            </ul>
         </li>
         <li class="nav-item">
             <a href="{{ route('contracts.index') }}" class="nav-link {{ request()->routeIs('contracts.*') && !request()->routeIs('contracts.expiring') ? 'active' : '' }}">
