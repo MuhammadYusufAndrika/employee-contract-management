@@ -23,7 +23,7 @@
     <div class="card emp-filter-card shadow-sm mb-4">
         <div class="card-body">
             <form method="GET" action="{{ route('employees.index') }}" class="row g-3">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="emp-search" class="form-label emp-filter-label">Search</label>
                     <input type="text" 
                            class="form-control emp-search-input" 
@@ -32,7 +32,18 @@
                            value="{{ request('search') }}" 
                            placeholder="Name, NIK, or Contract Number">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <label for="emp-status" class="form-label emp-filter-label">Status</label>
+                    <select class="form-select emp-filter-select" id="emp-status" name="status">
+                        <option value="">Active Only</option>
+                        <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All (Active & Expired)</option>
+                        {{-- <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option> --}}
+                        <option value="permanent" {{ request('status') == 'permanent' ? 'selected' : '' }}>Permanent</option>
+                        <option value="expiring_soon" {{ request('status') == 'expiring_soon' ? 'selected' : '' }}>Expiring Soon</option>
+                        <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <label for="emp-department" class="form-label emp-filter-label">Department</label>
                     <select class="form-select emp-filter-select" id="emp-department" name="department">
                         <option value="">All Departments</option>
@@ -43,7 +54,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="emp-work-location" class="form-label emp-filter-label">Work Location</label>
                     <select class="form-select emp-filter-select" id="emp-work-location" name="work_location">
                         <option value="">All Locations</option>
@@ -54,7 +65,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2 d-flex align-items-end">
+                <div class="col-md-3 d-flex align-items-end">
                     <button type="submit" class="btn emp-btn-filter w-100">
                         <i class="bi bi-funnel"></i> Filter
                     </button>
@@ -231,6 +242,7 @@
 
 .emp-btn-filter:hover {
     background-color: #002060;
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 61, 165, 0.3);
 }

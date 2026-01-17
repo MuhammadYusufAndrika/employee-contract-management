@@ -29,46 +29,70 @@ class EmployeeController extends Controller
             });
         }
 
-        // Department filter
-        if ($request->filled('department')) {
-            $query->whereHas('contracts', function ($q) use ($request) {
-                $q->where('department', $request->department);
-            });
-        }
-
-        // Work location filter
-        if ($request->filled('work_location')) {
-            $query->whereHas('contracts', function ($q) use ($request) {
-                $q->where('work_location', $request->work_location);
-            });
-        }
-
         $employees = $query->orderBy('employee_name', 'asc')->get();
 
-        // By default, show active employees (Active, Permanent, Expiring Soon) - exclude expired and layoff
-        $employees = $employees->filter(function ($employee) {
+        // Filter by department and work location using latest contract
+        $departmentFilter = $request->get('department');
+        $workLocationFilter = $request->get('work_location');
+
+        if ($departmentFilter || $workLocationFilter) {
+            $employees = $employees->filter(function ($employee) use ($departmentFilter, $workLocationFilter) {
+                $latestContract = $employee->contracts->first();
+
+                if (!$latestContract) {
+                    return false;
+                }
+
+                $matchesDepartment = !$departmentFilter || $latestContract->department === $departmentFilter;
+                $matchesWorkLocation = !$workLocationFilter || $latestContract->work_location === $workLocationFilter;
+
+                return $matchesDepartment && $matchesWorkLocation;
+            });
+        }
+
+        // Filter by status
+        $statusFilter = $request->get('status', ''); // Default: active only (empty string)
+
+        $employees = $employees->filter(function ($employee) use ($statusFilter) {
             $latestContract = $employee->contracts->first();
 
             if (!$latestContract) {
                 return false;
             }
 
-            // Exclude Layoff
+            // Always exclude Layoff
             if ($latestContract->status === 'Layoff') {
                 return false;
             }
 
-            // Include Permanent employees (they never expire)
-            if ($latestContract->status === 'Permanent') {
+            // Check if permanent (contract_type === 'KPP' or no end_date)
+            $isPermanent = $latestContract->contract_type === 'KPP' || !$latestContract->end_date;
+
+            // Check if expired
+            $isExpired = $latestContract->end_date && $latestContract->end_date < now();
+
+            // Check if expiring soon (within 30 days)
+            $isExpiringSoon = $latestContract->end_date
+                && $latestContract->end_date >= now()
+                && $latestContract->end_date <= now()->addDays(30);
+
+            // Apply status filter
+            if ($statusFilter === 'all') {
+                // Show all except layoff (active + expired)
                 return true;
+            } elseif ($statusFilter === 'active') {
+                // Only contracts expiring more than 30 days from now
+                return !$isPermanent && !$isExpired && !$isExpiringSoon;
+            } elseif ($statusFilter === 'permanent') {
+                return $isPermanent;
+            } elseif ($statusFilter === 'expiring_soon') {
+                return $isExpiringSoon;
+            } elseif ($statusFilter === 'expired') {
+                return !$isPermanent && $isExpired;
+            } else {
+                // Default: active only (exclude expired)
+                return !$isExpired || $isPermanent;
             }
-
-            // Exclude expired contracts
-            if ($latestContract->end_date && $latestContract->end_date < now()) {
-                return false;
-            }
-
-            return true;
         });
 
         // Get unique departments and work locations from contracts
