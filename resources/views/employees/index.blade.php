@@ -35,8 +35,8 @@
                 <div class="col-md-2">
                     <label for="emp-status" class="form-label emp-filter-label">Status</label>
                     <select class="form-select emp-filter-select" id="emp-status" name="status">
-                        <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All (Active & Expired)</option>
-                        <option value="">Active Only</option>
+                        <option value="all" {{ request('status', 'all') == 'all' ? 'selected' : '' }}>All (Active & Expired)</option>
+                        <option value="active_only" {{ request('status') == 'active_only' ? 'selected' : '' }}>Active Only</option>
                         {{-- <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option> --}}
                         <option value="permanent" {{ request('status') == 'permanent' ? 'selected' : '' }}>Permanent</option>
                         <option value="expiring_soon" {{ request('status') == 'expiring_soon' ? 'selected' : '' }}>Expiring Soon</option>
