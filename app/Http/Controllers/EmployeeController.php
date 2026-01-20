@@ -51,7 +51,7 @@ class EmployeeController extends Controller
         }
 
         // Filter by status
-        $statusFilter = $request->get('status', ''); // Default: active only (empty string)
+        $statusFilter = $request->get('status', 'all'); // Default: all (active & expired)
 
         $employees = $employees->filter(function ($employee) use ($statusFilter) {
             $latestContract = $employee->contracts->first();
@@ -80,6 +80,9 @@ class EmployeeController extends Controller
             if ($statusFilter === 'all') {
                 // Show all except layoff (active + expired)
                 return true;
+            } elseif ($statusFilter === 'active_only') {
+                // Active only (exclude expired)
+                return !$isExpired || $isPermanent;
             } elseif ($statusFilter === 'active') {
                 // Only contracts expiring more than 30 days from now
                 return !$isPermanent && !$isExpired && !$isExpiringSoon;
@@ -90,8 +93,8 @@ class EmployeeController extends Controller
             } elseif ($statusFilter === 'expired') {
                 return !$isPermanent && $isExpired;
             } else {
-                // Default: active only (exclude expired)
-                return !$isExpired || $isPermanent;
+                // Fallback: show all
+                return true;
             }
         });
 
