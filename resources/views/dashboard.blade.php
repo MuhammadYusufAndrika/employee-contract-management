@@ -71,18 +71,19 @@
             return $latestContract && $latestContract->status === 'Layoff';
         })->count();
         
-        // Contract statistics
-        $totalContracts = \App\Models\Contract::count();
-        $activeContracts = \App\Models\Contract::where('end_date', '>=', now())->count();
-        $expiredContracts = \App\Models\Contract::where('end_date', '<', now())->count();
+        // Contract statistics (latest contract per employee only)
+        $latestContractIds = \App\Models\Contract::latestPerEmployee();
+        $totalContracts = \App\Models\Contract::whereIn('id', $latestContractIds)->count();
+        $activeContracts = \App\Models\Contract::whereIn('id', $latestContractIds)->where('end_date', '>=', now())->count();
+        $expiredContracts = \App\Models\Contract::whereIn('id', $latestContractIds)->where('end_date', '<', now())->count();
         $expiringContracts = \App\Models\Contract::expiringWithinDays(30);
-        $recentContracts = \App\Models\Contract::with('employee')->orderBy('created_at', 'desc')->take(5)->get();
+        $recentContracts = \App\Models\Contract::with('employee')->whereIn('id', $latestContractIds)->orderBy('created_at', 'desc')->take(5)->get();
         
         // Analytics data
         $expiringIn7Days = \App\Models\Contract::expiringWithinDays(7);
         
-        // Department breakdown for expired contracts
-        $allContracts = \App\Models\Contract::all();
+        // Department breakdown for expired contracts (latest per employee only)
+        $allContracts = \App\Models\Contract::whereIn('id', $latestContractIds)->get();
         $departmentExpired = $allContracts->filter(function($contract) {
             return $contract->end_date && $contract->end_date < now();
         })->groupBy('department')->map(function($group) {
@@ -451,7 +452,7 @@
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body"> 
                     <div class="row text-center">
                         <div class="col-md-4 mb-3">
                             <a href="{{ route('contracts.create') }}" class="btn btn-primary btn-lg w-100">
@@ -503,7 +504,7 @@
                 // Draw label
                 ctx.font = '14px Arial';
                 ctx.fillStyle = '#666';
-                ctx.fillText('Total Contracts', centerX, centerY + 20);
+                ctx.fillText('Contaract', centerX, centerY + 20);
                 ctx.restore();
             }
         };
