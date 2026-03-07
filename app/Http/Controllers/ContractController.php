@@ -107,8 +107,8 @@ class ContractController extends Controller
 
         $contract = Contract::create($data);
 
-        // Check if this came from employee creation flow
-        if ($request->has('from_employee_creation')) {
+        // Redirect back to employee page if came from there
+        if ($request->has('from_employee') || $request->has('from_employee_creation')) {
             return redirect()->route('employees.show', $contract->employee)
                 ->with('success', 'Contract created successfully for ' . $contract->employee->employee_name . '.');
         }

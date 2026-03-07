@@ -22,6 +22,10 @@
                     <form action="{{ route('contracts.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
+                        @if($selectedEmployeeId)
+                            <input type="hidden" name="from_employee" value="{{ $selectedEmployeeId }}">
+                        @endif
+
                         <!-- Employee Selection -->
                         <h5 class="mb-3"><i class="bi bi-person"></i> Employee Selection</h5>
                         
