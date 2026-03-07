@@ -35,7 +35,7 @@
                                 @foreach($employees as $employee)
                                     <option value="{{ $employee->id }}" 
                                             data-nik="{{ $employee->nik }}"
-                                            {{ old('employee_id') == $employee->id ? 'selected' : '' }}>
+                                            {{ (old('employee_id') ?? $selectedEmployeeId) == $employee->id ? 'selected' : '' }}>
                                         {{ $employee->employee_name }} (NIK: {{ $employee->nik }})
                                     </option>
                                 @endforeach
