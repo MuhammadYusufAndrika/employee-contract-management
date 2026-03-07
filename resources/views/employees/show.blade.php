@@ -11,6 +11,11 @@
                     <i class="bi bi-person-badge-fill"></i> Employee Details
                 </h2>
                 <div>
+                    @if(auth()->user()->canModify())
+                        <a href="{{ route('contracts.create', ['employee_id' => $employee->id]) }}" class="btn btn-primary me-2">
+                            <i class="bi bi-plus-circle"></i> Add Contract
+                        </a>
+                    @endif
                     <a href="{{ route('employees.index') }}" class="btn empd-btn-back">
                         <i class="bi bi-arrow-left"></i> Back to Employee List
                     </a>

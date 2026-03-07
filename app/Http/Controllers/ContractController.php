@@ -83,7 +83,8 @@ class ContractController extends Controller
         }
 
         $employees = Employee::orderBy('employee_name')->get();
-        return view('contracts.create', compact('employees'));
+        $selectedEmployeeId = request('employee_id');
+        return view('contracts.create', compact('employees', 'selectedEmployeeId'));
     }
 
     /**
