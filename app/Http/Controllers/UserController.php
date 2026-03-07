@@ -94,7 +94,7 @@ class UserController extends Controller
             'role' => ['required', Rule::in([User::ROLE_SUPER_ADMIN, User::ROLE_ADMIN, User::ROLE_VIEWER])],
         ]);
 
-        // Only update password if provided
+        
         if ($request->filled('password')) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
