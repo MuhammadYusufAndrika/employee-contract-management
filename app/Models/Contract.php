@@ -38,7 +38,19 @@ class Contract extends Model
     }
 
     /**
-     * Get contracts expiring within the specified number of days
+     * Get the latest contract ID per employee (based on most recent start_date)
+     */
+    public static function latestPerEmployee()
+    {
+        return static::orderBy('start_date', 'desc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->unique('employee_id')
+            ->pluck('id');
+    }
+
+    /**
+     * Get contracts expiring within the specified number of days (latest per employee only)
      */
     public static function expiringWithinDays(int $days = 30)
     {
@@ -46,6 +58,7 @@ class Contract extends Model
         $futureDate = Carbon::today()->addDays($days);
 
         return static::with('employee')
+            ->whereIn('id', static::latestPerEmployee())
             ->whereBetween('end_date', [$today, $futureDate])
             ->orderBy('end_date', 'asc')
             ->get();

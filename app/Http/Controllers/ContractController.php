@@ -15,7 +15,8 @@ class ContractController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Contract::with('employee');
+        $query = Contract::with('employee')
+            ->whereIn('id', Contract::latestPerEmployee());
 
         // Search by employee name or NIK
         if ($request->filled('search')) {
@@ -202,6 +203,7 @@ class ContractController extends Controller
         };
 
         $query = Contract::with('employee')
+            ->whereIn('id', Contract::latestPerEmployee())
             ->whereNotNull('end_date')
             ->where('status', '!=', 'Layoff'); // Exclude laid-off employees
 
