@@ -1,59 +1,178 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📋 Management Kontrak
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A web-based **Employee Contract Management System** built with Laravel 12. Designed to help HR teams manage employee contracts, track expiry dates, handle layoffs, and maintain document libraries — all in one place.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 👥 Employee Management
+- Add, edit, view, and delete employee records
+- Upload employee CV / document files
+- Filter employees by status (Active, Permanent, Expiring Soon, Expired)
+- Filter by department and work location
+- View full contract history per employee
+- Add a new contract directly from an employee's detail page
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 📄 Contract Management
+- Create and manage employee contracts (Fixed-term `Kontrak` or Permanent `KPP`)
+- Contract list only shows **latest contract per employee** (no duplicates from renewals)
+- Filter contracts by status, department, work location, and keyword
+- Upload contract PDF files
+- View, edit, and delete contracts
+- Contract renewal support
 
-## Learning Laravel
+### ⚠️ Expiring Contracts
+- Dedicated expiring contracts page with period filters (1 month, 3 months, 6 months, 1 year, 1 year+)
+- Dashboard alerts for contracts expiring within 30 days
+- Color-coded badges (red for ≤7 days, yellow for ≤30 days)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🚫 Layoff Management
+- Process employee layoffs with reason and letter upload
+- **Restore** layoff record — returns employee to the active list
+- **Permanent delete** — removes employee and all associated data permanently
+- Layoff records tracked with date, reason, letter PDF, and processed-by user
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 📊 Dashboard Analytics
+- Contract statistics cards (Total, Active, Expiring Soon, Expired)
+- Donut chart — contract status distribution with center total count
+- Bar chart — contracts breakdown by department (top 6)
+- Contracts expiring soon list (name, job position, work location)
+- Recent contracts list (name, job position, work location)
+- Quick action buttons
 
-## Laravel Sponsors
+### 📚 Document Library
+- Upload and manage legal/regulatory documents
+- Fields: title, document number, type, theme, enacted date, published date
+- Track download counts
+- Active/inactive status toggle
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 🔐 User & Role Management
+- Three roles: `super_admin`, `admin`, `viewer`
+- **Super Admin / Admin** — full access (create, edit, delete)
+- **Viewer** — read-only access
+- Admin-only user management panel
 
-### Premium Partners
+### 📋 Contract History
+- Full audit trail of contract changes per employee
+- Search contract history by NIK
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 🛠️ Tech Stack
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 12, PHP 8.2+ |
+| Frontend | Bootstrap 5.3, Bootstrap Icons |
+| Charts | Chart.js 4.4 |
+| Auth | Laravel Breeze |
+| Database | MySQL |
+| Build Tool | Vite |
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🚀 Installation
 
-## Security Vulnerabilities
+### Requirements
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Steps
 
-## License
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd management-kontrak
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 2. Install PHP dependencies
+composer install
+
+# 3. Install Node dependencies
+npm install
+
+# 4. Copy environment file and generate app key
+cp .env.example .env
+php artisan key:generate
+
+# 5. Configure your database in .env
+DB_DATABASE=management_kontrak
+DB_USERNAME=root
+DB_PASSWORD=
+
+# 6. Run migrations and seed data
+php artisan migrate --seed
+
+# 7. Link storage for file uploads
+php artisan storage:link
+
+# 8. Build assets
+npm run build
+
+# 9. Start the development server
+php artisan serve
+```
+
+Visit `http://localhost:8000`
+
+---
+
+## 👤 Default Accounts
+
+| Role | Email | Password |
+|---|---|---|
+| Super Admin | superadmin@example.com | password |
+| Admin | admin@example.com | password |
+| Viewer | viewer@example.com | password |
+
+---
+
+## 📁 Project Structure
+
+```
+app/
+├── Http/Controllers/
+│   ├── ContractController.php       # Contract CRUD + expiring + renew
+│   ├── ContractHistoryController.php
+│   ├── DocumentController.php
+│   ├── EmployeeController.php       # Employee CRUD + filters + expired
+│   ├── LayoffController.php         # Layoff + restore + permanent delete
+│   └── UserController.php
+├── Models/
+│   ├── Contract.php                 # latestPerEmployee(), expiringWithinDays()
+│   ├── ContractHistory.php
+│   ├── Document.php
+│   ├── Employee.php
+│   ├── Layoff.php
+│   └── User.php
+resources/views/
+├── layouts/
+│   ├── bootstrap.blade.php          # Main app layout with sidebar
+│   └── bootstrap-nav.blade.php      # Sidebar navigation
+├── dashboard.blade.php              # Dashboard with charts & analytics
+├── contracts/                       # Contract views
+├── employees/                       # Employee views
+├── layoffs/                         # Layoff views
+├── documents/                       # Document library views
+└── users/                           # User management views
+```
+
+---
+
+## 📌 Key Business Rules
+
+- The **contract list** and **dashboard** always show the **latest contract per employee** (determined by most recent `start_date`)
+- The **employee detail page** shows the **full contract history**
+- Employees with a `KPP` contract type or no end date are considered **Permanent**
+- **Expiring Soon** = contract expiring within 30 days
+- **Active** employees = Permanent + Active (not expired, not layoff)
+- Layoff employees are excluded from all active employee lists
+
+---
+
+## 📄 License
+
+This project is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
